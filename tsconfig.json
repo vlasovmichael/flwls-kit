@@ -7,5 +7,5 @@
     "strict": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["packages/**/*.ts"]
+  "include": ["packages/**/*.ts", "vitest.config.ts"]
 }
