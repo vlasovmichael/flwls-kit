@@ -11,7 +11,7 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json && cp src/tokens.css dist/tokens.css"
   },
   "dependencies": {
     "lit": "^3.3.3"

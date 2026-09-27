@@ -1,2 +1,56 @@
 :root {
+  color-scheme: light;
+  --ground: #f2f5f8;
+  --panel: #fff;
+  --panel-sunk: #e9eef3;
+  --sheen: rgb(255 255 255 / 90%);
+  --ink: #101720;
+  --ink-2: #4d5967;
+  --ink-3: #7c8794;
+  --rule: #dbe2ea;
+  --rule-soft: #e8edf3;
+  --accent: #2b5bd7;
+  --accent-2: #4f7ef0;
+  --accent-ink: #fff;
+  --wash: rgb(43 91 215 / 10%);
+  --data: #2f7d55;
+  --data-2: #4aa872;
+  --data-wash: rgb(47 125 85 / 12%);
+  --attn: #b8492a;
+  --attn-wash: rgb(184 73 42 / 12%);
+  --shadow: 0 1px 2px rgb(16 23 32 / 4%), 0 12px 28px -20px rgb(16 23 32 / 45%);
+  --shadow-lift: 0 2px 6px rgb(16 23 32 / 7%), 0 18px 36px -22px rgb(16 23 32 / 50%);
+  --shadow-float: 0 2px 4px rgb(16 23 32 / 8%), 0 14px 32px -18px rgb(16 23 32 / 50%);
+  --display: "Geologica Variable", ui-sans-serif, system-ui, sans-serif;
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --gap: clamp(2rem, 5vw, 3.25rem);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --spring: cubic-bezier(0.22, 1.15, 0.36, 1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #080b10;
+  --panel: #141a22;
+  --panel-sunk: #0e131a;
+  --sheen: rgb(255 255 255 / 5%);
+  --ink: #eaeef4;
+  --ink-2: #97a3b2;
+  --ink-3: #69737f;
+  --rule: #242c37;
+  --rule-soft: #1a212a;
+  --accent: #6d97f5;
+  --accent-2: #8fb0f8;
+  --accent-ink: #0a0e14;
+  --wash: rgb(109 151 245 / 16%);
+  --data: #5fbe86;
+  --data-2: #8fd9aa;
+  --data-wash: rgb(95 190 134 / 16%);
+  --attn: #ee8a62;
+  --attn-wash: rgb(238 138 98 / 15%);
+  --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
+  --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
+  --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
 }
