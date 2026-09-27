@@ -19,9 +19,10 @@ test('список сообщает выбранное значение', async 
       { once: true },
     );
   });
-  const input = select.shadowRoot?.querySelector('select') as HTMLSelectElement;
-  input.value = 'two';
-  input.dispatchEvent(new Event('change'));
+  const button = select.querySelector('.select-button') as HTMLButtonElement;
+  button.click();
+  const option = select.querySelectorAll('.select-option')[1] as HTMLLIElement;
+  option.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
   expect((await changed).detail).toBe('two');
   select.remove();
 });
