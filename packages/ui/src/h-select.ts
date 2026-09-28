@@ -2,6 +2,14 @@ import { LitElement, html } from 'lit';
 
 export type SelectOption = { label: string; value: string };
 
+/** Левая граница ближайшего предка, который обрезает содержимое по горизонтали. */
+function clipLeft(node: HTMLElement) {
+  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+    if (getComputedStyle(parent).overflowX !== 'visible') return parent.getBoundingClientRect().left;
+  }
+  return 0;
+}
+
 export class HSelect extends LitElement {
   static properties = {
     options: { attribute: false },
@@ -50,8 +58,25 @@ export class HSelect extends LitElement {
 
   #setOpen(next: boolean) {
     this.#open = next;
+    this.dataset.open = String(next);
     if (next) this.#active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
     this.requestUpdate();
+    if (next) void this.#place();
+  }
+
+  /** У края экрана или контейнера список разворачивается туда, где есть место. */
+  async #place() {
+    await this.updateComplete;
+    const list = this.querySelector<HTMLElement>('.select-list');
+    if (!list) return;
+    this.classList.remove('is-up', 'is-start');
+    if (window.innerHeight - list.getBoundingClientRect().bottom < 8) this.classList.add('is-up');
+    if (list.getBoundingClientRect().left < clipLeft(this) + 8) this.classList.add('is-start');
+    this.#showActive();
+  }
+
+  #showActive() {
+    this.querySelector('.is-active')?.scrollIntoView({ block: 'nearest' });
   }
 
   #choose(index: number) {
@@ -66,6 +91,9 @@ export class HSelect extends LitElement {
     if (!this.#open) { this.#setOpen(true); return; }
     this.#active = (this.#active + step + this.options.length) % this.options.length;
     this.requestUpdate();
+    void this.updateComplete.then(() => {
+      this.#showActive();
+    });
   }
 
   #outside = (event: PointerEvent) => {
