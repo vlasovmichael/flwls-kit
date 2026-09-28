@@ -1,0 +1,63 @@
+/*
+  Тема guides: те же имена токенов, что в tokens.css, другие значения —
+  графит, один холодный акцент, чертёжные линии, почти прямые углы.
+  Подключается после tokens.css; шрифты Onest и Golos Text грузит приложение.
+*/
+
+:root {
+  --ground: #eee;
+  --panel: #f7f7f7;
+  --panel-sunk: #fff;
+  --ink: #222831;
+  --ink-2: #4c545e;
+  --ink-3: #79818b;
+  --rule: #b9bec4;
+  --rule-soft: #dcdcdc;
+  --accent: #00838a;
+  --accent-2: #00adb5;
+  --accent-ink: #eee;
+  --wash: rgb(0 131 138 / 10%);
+  --attn: #c33a40;
+  --attn-wash: rgb(195 58 64 / 12%);
+  --display: "Onest Variable", system-ui, sans-serif;
+  --sans: "Golos Text Variable", system-ui, sans-serif;
+  --mono: ui-monospace, sfmono-regular, menlo, monospace;
+  --radius: 3px;
+  --radius-sm: 2px;
+}
+
+:root[data-theme="dark"] {
+  --ground: #222831;
+  --panel: #2b313b;
+  --panel-sunk: #333944;
+  --ink: #eee;
+  --ink-2: #b6bcc4;
+  --ink-3: #8b939d;
+  --rule: #576069;
+  --rule-soft: #3d444f;
+  --accent: #00adb5;
+  --accent-2: #00767c;
+  --accent-ink: #222831;
+  --wash: rgb(0 173 181 / 14%);
+  --attn: #e2565b;
+  --attn-wash: rgb(226 86 91 / 15%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #222831;
+    --panel: #2b313b;
+    --panel-sunk: #333944;
+    --ink: #eee;
+    --ink-2: #b6bcc4;
+    --ink-3: #8b939d;
+    --rule: #576069;
+    --rule-soft: #3d444f;
+    --accent: #00adb5;
+    --accent-2: #00767c;
+    --accent-ink: #222831;
+    --wash: rgb(0 173 181 / 14%);
+    --attn: #e2565b;
+    --attn-wash: rgb(226 86 91 / 15%);
+  }
+}
