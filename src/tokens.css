@@ -54,3 +54,31 @@
   --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
   --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
 }
+
+/* Тема «как в системе»: тёмная, пока пользователь не выбрал светлую явно. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #080b10;
+    --panel: #141a22;
+    --panel-sunk: #0e131a;
+    --sheen: rgb(255 255 255 / 5%);
+    --ink: #eaeef4;
+    --ink-2: #97a3b2;
+    --ink-3: #69737f;
+    --rule: #242c37;
+    --rule-soft: #1a212a;
+    --accent: #6d97f5;
+    --accent-2: #8fb0f8;
+    --accent-ink: #0a0e14;
+    --wash: rgb(109 151 245 / 16%);
+    --data: #5fbe86;
+    --data-2: #8fd9aa;
+    --data-wash: rgb(95 190 134 / 16%);
+    --attn: #ee8a62;
+    --attn-wash: rgb(238 138 98 / 15%);
+    --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
+    --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
+    --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
+  }
+}
