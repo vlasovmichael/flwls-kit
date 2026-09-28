@@ -26,3 +26,19 @@ test('список сообщает выбранное значение', async 
   expect((await changed).detail).toBe('two');
   select.remove();
 });
+
+test('у нижнего края список разворачивается вверх', async () => {
+  const select = document.createElement('h-select') as HSelect;
+  select.options = [{ label: 'Первый', value: 'one' }];
+  document.body.append(select);
+  await select.updateComplete;
+
+  const list = select.querySelector('.select-list') as HTMLElement;
+  list.getBoundingClientRect = () => ({ bottom: window.innerHeight, left: 100 }) as DOMRect;
+  (select.querySelector('.select-button') as HTMLButtonElement).click();
+  await select.updateComplete;
+  await Promise.resolve();
+
+  expect([select.dataset.open, select.classList.contains('is-up')]).toEqual(['true', true]);
+  select.remove();
+});
