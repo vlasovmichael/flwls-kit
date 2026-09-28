@@ -12,7 +12,7 @@ test('уведомление сообщает о закрытии', async () => 
       resolve();
     });
   });
-  (toast.shadowRoot?.querySelector('button') as HTMLButtonElement).click();
+  (toast.shadowRoot?.querySelector('article') as HTMLElement).click();
   await dismissed;
 
   expect(toast.open).toBe(false);
