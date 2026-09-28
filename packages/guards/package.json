@@ -1,0 +1,22 @@
+{
+  "name": "@flwls/guards",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Сторожа репозиториев: комментарии, размер файлов, храповик JS, сообщение коммита",
+  "bin": {
+    "flwls-guards": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "engines": {
+    "node": ">= 20"
+  }
+}
