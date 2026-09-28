@@ -1,0 +1,38 @@
+# Выкатка на Oracle для любого проекта kit: вызывается из CI проекта после зелёных проверок.
+# Ключ в authorized_keys привязан к deploy/autodeploy.sh: утёкший, он умеет лишь выкатить main.
+name: oracle-deploy
+
+on:
+  workflow_call:
+    inputs:
+      port:
+        type: number
+        default: 2234
+    secrets:
+      DEPLOY_SSH_KEY:
+        required: true
+      DEPLOY_KNOWN_HOSTS:
+        required: true
+      DEPLOY_HOST:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Выкатки по очереди: отменённая на середине оставила бы прод без контейнера.
+    concurrency:
+      group: deploy-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - name: deploy to Oracle
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          PORT: ${{ inputs.port }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -T -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "ubuntu@$HOST"
