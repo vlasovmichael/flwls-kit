@@ -8,13 +8,14 @@
       "import": "./dist/index.js"
     },
     "./tokens.css": "./dist/tokens.css",
-    "./themes/guides.css": "./dist/themes/guides.css"
+    "./themes/guides.css": "./dist/themes/guides.css",
+    "./base.css": "./dist/base.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && cp src/tokens.css dist/tokens.css && mkdir -p dist/themes && cp src/themes/*.css dist/themes/"
+    "build": "tsc -p tsconfig.build.json && cp src/tokens.css dist/tokens.css && cp src/base.css dist/base.css && mkdir -p dist/themes && cp src/themes/*.css dist/themes/"
   },
   "dependencies": {
     "lit": "^3.3.3",
