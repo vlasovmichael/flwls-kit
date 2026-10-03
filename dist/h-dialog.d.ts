@@ -14,11 +14,21 @@ export declare class HDialog extends LitElement {
             type: BooleanConstructor;
             reflect: boolean;
         };
+        confirmLabel: {
+            type: StringConstructor;
+            attribute: string;
+        };
+        cancelLabel: {
+            type: StringConstructor;
+            attribute: string;
+        };
     };
     static styles: import("lit").CSSResult;
     open: boolean;
     title: string;
     danger: boolean;
+    confirmLabel: string;
+    cancelLabel: string;
     constructor();
     updated(changed: Map<PropertyKey, unknown>): void;
     disconnectedCallback(): void;

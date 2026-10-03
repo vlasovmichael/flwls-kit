@@ -14,7 +14,7 @@ export class HToast extends LitElement {
     :host([open]) {
       display: block;
     }
-    article {
+    .toast {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -54,7 +54,7 @@ export class HToast extends LitElement {
         this.open = true;
     }
     firstUpdated() {
-        const card = this.renderRoot.querySelector('article');
+        const card = this.renderRoot.querySelector('.toast');
         if (card) {
             play(card, [
                 { opacity: 0, transform: 'translateY(10px) scale(.96)' },
@@ -75,7 +75,7 @@ export class HToast extends LitElement {
             this.open = false;
             this.dispatchEvent(new CustomEvent('dismiss', { bubbles: true, composed: true }));
         };
-        const card = this.renderRoot.querySelector('article');
+        const card = this.renderRoot.querySelector('.toast');
         const out = card
             ? play(card, [{ opacity: 1 }, { opacity: 0, transform: 'translateY(6px)' }], { duration: 180, easing: EASE, fill: 'forwards' })
             : null;
@@ -85,7 +85,8 @@ export class HToast extends LitElement {
             done();
     }
     render() {
-        return html `<article
+        return html `<div
+      class="toast"
       role="status"
       @click=${() => {
             this.dismiss();
@@ -95,7 +96,7 @@ export class HToast extends LitElement {
         ${this.tone === 'bad' ? GLYPHS.warn : GLYPHS.check}
       </svg>
       <slot>${this.message}</slot>
-    </article>`;
+    </div>`;
     }
 }
 customElements.define('h-toast', HToast);
