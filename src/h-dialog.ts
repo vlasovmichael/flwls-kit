@@ -1,15 +1,24 @@
-import { LitElement, css, html, svg } from 'lit';
-import { EASE, GLYPHS, SPRING, play } from './glyphs.js';
+import { LitElement, css, html } from 'lit';
+import './h-icon.js';
+import { EASE, SPRING, play } from './motion.js';
 
-const icon = (paths: ReturnType<typeof svg>) =>
-  html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+const FOCUSABLE = [
+  'button:not([disabled])',
+  '[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ');
 
 /** Окно подтверждения: `confirm` или `cancel` приходят после анимации ухода. */
 export class HDialog extends LitElement {
   static properties = {
     open: { type: Boolean, reflect: true },
     title: { type: String },
+    description: { type: String },
     danger: { type: Boolean, reflect: true },
+    size: { type: String, reflect: true },
     confirmLabel: { type: String, attribute: 'confirm-label' },
     cancelLabel: { type: String, attribute: 'cancel-label' },
   };
@@ -29,7 +38,7 @@ export class HDialog extends LitElement {
       align-items: center;
       justify-content: center;
       padding: var(--space-5);
-      background: color-mix(in srgb, var(--ink) 45%, transparent);
+      background: var(--scrim);
     }
     section {
       position: relative;
@@ -41,6 +50,12 @@ export class HDialog extends LitElement {
       box-shadow: var(--shadow-float);
       color: var(--ink);
       font-family: var(--sans);
+    }
+    :host([size='sm']) section {
+      width: min(20rem, 100%);
+    }
+    :host([size='lg']) section {
+      width: min(36rem, 100%);
     }
     header {
       display: flex;
@@ -58,15 +73,6 @@ export class HDialog extends LitElement {
       border-radius: 50%;
       background: var(--attn-wash);
       color: var(--attn);
-    }
-    .icon {
-      width: 1rem;
-      height: 1rem;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
     }
     h2 {
       margin: 0;
@@ -100,9 +106,9 @@ export class HDialog extends LitElement {
       background: transparent;
       color: var(--ink-3);
     }
-    .close .icon {
-      width: 0.95rem;
-      height: 0.95rem;
+    .close h-icon {
+      width: var(--space-4);
+      height: var(--space-4);
     }
     /* Отступ до кнопок держит разметка компонента: текст в слоте бывает голой строкой. */
     .body {
@@ -142,18 +148,24 @@ export class HDialog extends LitElement {
 
   declare open: boolean;
   declare title: string;
+  declare description: string;
   declare danger: boolean;
+  declare size: 'sm' | 'md' | 'lg';
   declare confirmLabel: string;
   declare cancelLabel: string;
 
   #opener: HTMLElement | null = null;
   #leaving = false;
 
+  #uid = `dialog-${Math.random().toString(36).slice(2, 8)}`;
+
   constructor() {
     super();
     this.open = false;
     this.title = '';
+    this.description = '';
     this.danger = false;
+    this.size = 'md';
     this.confirmLabel = 'Confirm';
     this.cancelLabel = 'Cancel';
   }
@@ -162,12 +174,34 @@ export class HDialog extends LitElement {
     if (event.key === 'Escape' && this.open) this.close('cancel');
   };
 
+  // Фокус живёт в двух деревьях: кнопки окна — в shadow DOM, поля из слотов — в light DOM.
+  #trapFocus = (event: KeyboardEvent) => {
+    if (event.key !== 'Tab') return;
+    const card = this.renderRoot.querySelector('section');
+    const ownFocusable = [...(card?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])];
+    const slotted = [...this.querySelectorAll<HTMLElement>(FOCUSABLE)];
+    const footerSlotted = this.querySelector('[slot="footer"]') !== null;
+    const first = ownFocusable.at(0) ?? slotted.at(0);
+    const last = footerSlotted ? slotted.at(-1) : (ownFocusable.at(-1) ?? slotted.at(-1));
+    if (!first || !last) return;
+    // document.activeElement видит только хост; внутренний фокус — у shadowRoot.
+    const active = this.shadowRoot?.activeElement ?? document.activeElement;
+    if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   updated(changed: Map<PropertyKey, unknown>) {
     if (!changed.has('open')) return;
     if (this.open) {
       this.#opener = document.activeElement as HTMLElement | null;
       document.body.classList.add('is-modal-open');
       document.addEventListener('keydown', this.#escape);
+      document.addEventListener('keydown', this.#trapFocus);
       const root = this.renderRoot;
       const backdrop = root.querySelector('.backdrop');
       const card = root.querySelector('section');
@@ -203,6 +237,7 @@ export class HDialog extends LitElement {
   #release() {
     document.body.classList.remove('is-modal-open');
     document.removeEventListener('keydown', this.#escape);
+    document.removeEventListener('keydown', this.#trapFocus);
   }
 
   /** Закрыть окно: уход анимируется, событие приходит после него. */
@@ -225,8 +260,17 @@ export class HDialog extends LitElement {
           fill: 'forwards',
         })
       : null;
-    if (out) out.onfinish = done;
-    else done();
+    // Анимацию ухода снимаем после конца: с fill: forwards прозрачность 0 пережила бы
+    // закрытие и погасила окно при следующем открытии.
+    if (out) {
+      out.onfinish = () => {
+        done();
+        out.finished.catch(() => undefined);
+        out.cancel();
+      };
+    } else {
+      done();
+    }
   }
 
   render() {
@@ -236,23 +280,35 @@ export class HDialog extends LitElement {
         if (event.target === event.currentTarget) this.close("cancel");
       }}
     >
-      <section role="dialog" aria-modal="true" aria-label=${this.title}>
-        <header>
-          ${this.danger ? html`<span class="glyph">${icon(GLYPHS.warn)}</span>` : ''}
-          <h2>${this.title}</h2>
-          <button
-            type="button"
-            class="close"
-            aria-label="Close"
-            @click=${() => {
-              this.close("cancel");
-            }}
-          >
-            ${icon(GLYPHS.close)}
-          </button>
-        </header>
-        <div class="body"><slot></slot></div>
-        <footer>
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby=${`${this.#uid}-title`}
+        aria-describedby=${this.description ? `${this.#uid}-description` : null}
+      >
+        <slot name="header">
+          <header>
+            ${this.danger
+              ? html`<span class="glyph"><h-icon name="triangle-alert"></h-icon></span>`
+              : ''}
+            <h2 id=${`${this.#uid}-title`}>${this.title}</h2>
+            <button
+              type="button"
+              class="close"
+              aria-label="Close"
+              @click=${() => {
+                this.close("cancel");
+              }}
+            >
+              <h-icon name="x"></h-icon>
+            </button>
+          </header>
+        </slot>
+        <div id=${`${this.#uid}-description`} class="body">
+          <slot>${this.description}</slot>
+        </div>
+        <slot name="footer">
+          <footer>
           <button
             type="button"
             class="cancel"
@@ -269,11 +325,11 @@ export class HDialog extends LitElement {
               this.close("confirm");
             }}
           >
-            ${this.danger ? icon(GLYPHS.trash) : icon(GLYPHS.check)}<slot name="confirm"
-              >${this.confirmLabel}</slot
-            >
+            <h-icon name=${this.danger ? 'trash-2' : 'check'}></h-icon>
+            <slot name="confirm">${this.confirmLabel}</slot>
           </button>
-        </footer>
+          </footer>
+        </slot>
       </section>
     </div>`;
   }

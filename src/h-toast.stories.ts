@@ -1,49 +1,158 @@
 import { html } from 'lit';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import './h-toast.ts';
-import type { HToast } from './h-toast.ts';
+import type { HToast, ToastTone } from './h-toast.ts';
 
-type Args = { message: string; tone: 'ok' | 'bad'; onDismiss: () => void };
+type Args = {
+  title: string;
+  message: string;
+  tone: ToastTone;
+  duration: number;
+  dismissible: boolean;
+  onDismiss: () => void;
+};
 
 export default {
   title: 'Components/Overlays/Toast',
   component: 'h-toast',
-  args: { message: 'Entry saved', tone: 'ok', onDismiss: fn() },
+  args: {
+    title: 'Saved',
+    message: 'Your changes are available to everyone.',
+    tone: 'success',
+    duration: 0,
+    dismissible: true,
+    onDismiss: fn(),
+  },
   argTypes: {
-    message: { control: 'text', description: 'Text, used when the slot is empty' },
-    tone: { control: 'inline-radio', options: ['ok', 'bad'], description: '`ok` — check mark, `bad` — warning' },
-    onDismiss: { table: { category: 'Events' }, description: '`dismiss` — the toast was closed' },
+    title: { control: 'text', description: 'Optional concise heading.' },
+    message: { control: 'text', description: 'Fallback text for the default slot.' },
+    tone: {
+      control: 'select',
+      options: ['info', 'success', 'warning', 'error', 'ok', 'bad'],
+      description: 'Status tone; `ok` and `bad` are compatibility aliases.',
+    },
+    duration: {
+      control: { type: 'number', min: 0, step: 100 },
+      description: 'Milliseconds to wait; zero leaves the toast open.',
+    },
+    dismissible: { control: 'boolean', description: 'Shows the labelled close button.' },
+    onDismiss: {
+      table: { category: 'Events' },
+      description: '`dismiss` detail has `timeout`, `close` or `action` reason.',
+    },
   },
   parameters: {
     docs: {
       description: {
-        component: `A short message about the result of an action. Disappears on its own.
+        component: `A short, non-blocking result message with a keyboard-operable close button.
+Anatomy: icon, optional title, message, action slot and close button.
 
-**Use** for "saved", "could not send".
-**Don't use** for a form error the user must fix — show it next to the field.`,
+**Use** after a completed action such as saving or sending.
+**Don't use** for an error the user must correct; place that next to its field.`,
       },
     },
   },
 };
 
-export const Playground = {
-  render: (a: Args) => html`
-    <button
-      class="demo-button"
-      @click=${(e: Event) => {
-        const toast = (e.currentTarget as HTMLElement).nextElementSibling as HToast;
-        toast.open = true;
-      }}
-    >
-      Show toast
-    </button>
-    <h-toast message=${a.message} tone=${a.tone} @dismiss=${a.onDismiss}></h-toast>
-  `,
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Show toast' }));
+const render = (args: Args) => html`
+  <button
+    class="demo-button"
+    @click=${(event: Event) => {
+      const toast = (event.currentTarget as HTMLElement).nextElementSibling as HToast;
+      toast.open = true;
+    }}
+  >
+    Open toast
+  </button>
+  <h-toast
+    .title=${args.title}
+    .message=${args.message}
+    .tone=${args.tone}
+    .duration=${args.duration}
+    .dismissible=${args.dismissible}
+    @dismiss=${args.onDismiss}
+  ></h-toast>
+`;
+
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
+  render,
+  play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Open toast' }));
     const toast = canvasElement.querySelector('h-toast') as HToast;
     await waitFor(() => expect(toast.open).toBe(true));
+    const close = toast.shadowRoot?.querySelector('.close') as HTMLButtonElement;
+    close.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(args.onDismiss).toHaveBeenCalled());
   },
 };
 
-export const Error = { args: { message: 'Could not send', tone: 'bad' }, render: Playground.render };
+export const ReopenTest = {
+  name: 'Test: Reopen',
+  tags: ['!dev', '!autodocs'],
+  args: { duration: 0 },
+  render,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const openButton = within(canvasElement).getByRole('button', { name: 'Open toast' });
+    const toast = canvasElement.querySelector('h-toast') as HTMLElement & { open: boolean };
+    const root = toast.shadowRoot as ShadowRoot;
+    const settle = () => Promise.all(root.getAnimations().map((a) => a.finished));
+
+    for (let round = 0; round < 2; round += 1) {
+      await userEvent.click(openButton);
+      await waitFor(() => expect(toast.open).toBe(true));
+      await settle();
+      const card = root.querySelector('.toast') as HTMLElement;
+      await expect(getComputedStyle(card).opacity).toBe('1');
+      await userEvent.click(root.querySelector('.close') as HTMLButtonElement);
+      await waitFor(() => expect(toast.open).toBe(false));
+    }
+  },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
+};
+
+export const Info = {
+  args: { tone: 'info' },
+  render,
+};
+
+export const Success = {
+  args: { tone: 'success' },
+  render,
+};
+
+export const Warning = {
+  args: { tone: 'warning' },
+  render,
+};
+
+export const Error = {
+  args: { tone: 'error' },
+  render,
+};
+
+export const LegacyOk = {
+  args: { tone: 'ok' },
+  render,
+};
+
+export const LegacyBad = {
+  args: { tone: 'bad' },
+  render,
+};
+
+export const Timed = {
+  args: { duration: 2400 },
+  render,
+};
+
+export const WithoutCloseButton = {
+  args: { dismissible: false },
+  render,
+};
