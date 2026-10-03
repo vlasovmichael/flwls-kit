@@ -90,6 +90,29 @@ export const PlaygroundTest = {
   },
 };
 
+export const ReopenTest = {
+  name: 'Test: Reopen',
+  tags: ['!dev', '!autodocs'],
+  args: { duration: 0 },
+  render,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const openButton = within(canvasElement).getByRole('button', { name: 'Open toast' });
+    const toast = canvasElement.querySelector('h-toast') as HTMLElement & { open: boolean };
+    const root = toast.shadowRoot as ShadowRoot;
+    const settle = () => Promise.all(root.getAnimations().map((a) => a.finished));
+
+    for (let round = 0; round < 2; round += 1) {
+      await userEvent.click(openButton);
+      await waitFor(() => expect(toast.open).toBe(true));
+      await settle();
+      const card = root.querySelector('.toast') as HTMLElement;
+      await expect(getComputedStyle(card).opacity).toBe('1');
+      await userEvent.click(root.querySelector('.close') as HTMLButtonElement);
+      await waitFor(() => expect(toast.open).toBe(false));
+    }
+  },
+};
+
 export const Playground = {
   render: PlaygroundTest.render,
 };

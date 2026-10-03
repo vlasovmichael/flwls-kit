@@ -259,6 +259,10 @@ export class HToast extends LitElement {
       if (finished) return;
       finished = true;
       done();
+      // fill: forwards оставил бы карточку прозрачной при следующем открытии.
+      // cancel() до конца анимации отклоняет finished — это ожидаемо, не ошибка.
+      out.finished.catch(() => undefined);
+      out.cancel();
     };
     out.onfinish = finish;
     setTimeout(finish, 260);
