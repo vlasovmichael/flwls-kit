@@ -28,6 +28,46 @@
   --radius: 14px;
   --radius-sm: 9px;
   --spring: cubic-bezier(0.22, 1.15, 0.36, 1);
+
+  /* Шкалы плотного интерфейса: имена не совпадают ни с одним проектом, чтобы не перебивать их. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --text-micro: 10px;
+  --text-label: 11px;
+  --text-small: 12px;
+  --text-body: 13px;
+  --text-base: 14px;
+  --text-lead: 16px;
+  --text-h3: 19px;
+  --text-h2: 22px;
+  --text-h1: 30px;
+  --text-hero: 46px;
+  --layer-sticky: 10;
+  --layer-popover: 50;
+  --layer-dialog: 70;
+  --layer-toast: 90;
+
+  /* Деньги: прибыль, убыток и предупреждение не смешиваются с data/attn. */
+  --gain: #1f7a4d;
+  --gain-wash: rgb(31 122 77 / 12%);
+  --gain-line: rgb(31 122 77 / 40%);
+  --loss: #c4372b;
+  --loss-wash: rgb(196 55 43 / 10%);
+  --loss-line: rgb(196 55 43 / 40%);
+  --caution: #a66a00;
+  --caution-wash: rgb(166 106 0 / 12%);
+  --panel-raised: #f7f9fb;
+  --rule-strong: #c3ccd6;
+  --plot-grid: #e8edf3;
+  --plot-price: #2b5bd7;
+  --plot-volume: #4aa872;
+  --plot-ema: #c99700;
 }
 
 :root[data-theme="dark"] {
@@ -53,6 +93,20 @@
   --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
   --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
   --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
+  --gain: #5fbe86;
+  --gain-wash: rgb(95 190 134 / 16%);
+  --gain-line: rgb(95 190 134 / 40%);
+  --loss: #f0705f;
+  --loss-wash: rgb(240 112 95 / 15%);
+  --loss-line: rgb(240 112 95 / 40%);
+  --caution: #e0a43a;
+  --caution-wash: rgb(224 164 58 / 15%);
+  --panel-raised: #1a212b;
+  --rule-strong: #333d4a;
+  --plot-grid: #1a212a;
+  --plot-price: #6d97f5;
+  --plot-volume: #5fbe86;
+  --plot-ema: #ffd60a;
 }
 
 /* Тема «как в системе»: тёмная, пока пользователь не выбрал светлую явно. */
@@ -80,5 +134,19 @@
     --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
     --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
     --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
+    --gain: #5fbe86;
+    --gain-wash: rgb(95 190 134 / 16%);
+    --gain-line: rgb(95 190 134 / 40%);
+    --loss: #f0705f;
+    --loss-wash: rgb(240 112 95 / 15%);
+    --loss-line: rgb(240 112 95 / 40%);
+    --caution: #e0a43a;
+    --caution-wash: rgb(224 164 58 / 15%);
+    --panel-raised: #1a212b;
+    --rule-strong: #333d4a;
+    --plot-grid: #1a212a;
+    --plot-price: #6d97f5;
+    --plot-volume: #5fbe86;
+    --plot-ema: #ffd60a;
   }
 }
