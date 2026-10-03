@@ -21,6 +21,16 @@ export {
 } from './h-tooltip.js';
 export { HField, HTextarea, type FieldSize } from './h-field.js';
 export {
+  HCheckbox,
+  HSwitch,
+  type CheckControlSize,
+} from './h-checkbox.js';
+export {
+  HRadioGroup,
+  type RadioGroupOption,
+  type RadioGroupSize,
+} from './h-radio-group.js';
+export {
   HSegmentedControl,
   type SegmentedControlOption,
   type SegmentedControlSize,
