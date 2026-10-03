@@ -64,7 +64,9 @@ const render = (args: Args) => html`
   </h-tag>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const tag = canvasElement.querySelector('h-tag') as HTMLElement & {
@@ -77,6 +79,10 @@ export const Playground = {
     await userEvent.keyboard('{Enter}');
     await expect(args.onRemove).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Neutral = {

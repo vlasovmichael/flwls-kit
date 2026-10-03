@@ -55,7 +55,9 @@ const render = (args: SkeletonArgs) => html`
   ></h-skeleton>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const skeleton = canvasElement.querySelector('h-skeleton') as HTMLElement & {
@@ -66,6 +68,10 @@ export const Playground = {
     const shape = skeleton.shadowRoot.querySelector('.skeleton');
     await expect(shape).toHaveAttribute('aria-hidden', 'true');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Text = {

@@ -89,7 +89,9 @@ const render = (args: TooltipArgs) => html`
   </h-tooltip>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: TooltipArgs }) => {
     const canvas = within(canvasElement);
@@ -107,6 +109,10 @@ export const Playground = {
     await expect(args.onOpen).toHaveBeenCalled();
     await expect(args.onClose).toHaveBeenCalled();
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Top = {

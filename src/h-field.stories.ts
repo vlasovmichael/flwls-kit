@@ -88,7 +88,9 @@ const render = (args: Args) => html`
   </h-field>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const field = canvasElement.querySelector('h-field') as HTMLElement & {
@@ -101,6 +103,10 @@ export const Playground = {
     await expect(input.value).toBe('Main');
     await expect(args.onInput).toHaveBeenCalled();
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Small = { args: { size: 'sm' }, render };

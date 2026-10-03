@@ -111,7 +111,9 @@ const render = (args: CheckboxArgs) => html`
   ></h-checkbox>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: CheckboxArgs }) => {
     const checkbox = canvasElement.querySelector('h-checkbox') as HTMLElement & {
@@ -124,6 +126,10 @@ export const Playground = {
     await expect(input.checked).toBe(true);
     await expect(args.onChange).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Checked = {

@@ -66,7 +66,9 @@ const render = (args: EmptyStateArgs) => html`
   </h-empty-state>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: EmptyStateArgs }) => {
     const state = canvasElement.querySelector('h-empty-state') as HTMLElement & {
@@ -84,6 +86,10 @@ export const Playground = {
     await userEvent.keyboard('{Enter}');
     await expect(args.onClick).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Neutral = {

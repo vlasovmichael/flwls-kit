@@ -82,7 +82,9 @@ const render = (args: Args) => html`
   </h-button>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const component = canvasElement.querySelector('h-button') as HTMLElement & {
@@ -97,6 +99,10 @@ export const Playground = {
     await userEvent.keyboard(' ');
     await expect(args.onClick).toHaveBeenCalledTimes(3);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Neutral = { render };

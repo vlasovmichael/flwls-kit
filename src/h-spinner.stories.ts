@@ -45,7 +45,9 @@ const render = (args: SpinnerArgs) => html`
   <h-spinner size=${args.size} label=${args.label}></h-spinner>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const spinner = canvasElement.querySelector('h-spinner') as HSpinnerElement;
@@ -55,6 +57,10 @@ export const Playground = {
     await expect(status).toHaveAttribute('role', 'status');
     await expect(status).toHaveAttribute('aria-label', 'Loading');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Small = {

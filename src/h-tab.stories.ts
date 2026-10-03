@@ -54,7 +54,9 @@ const render = (args: TabArgs) => html`
   </h-tabs>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: TabArgs }) => {
     const canvas = within(canvasElement);
@@ -63,6 +65,10 @@ export const Playground = {
     await expect(details).toHaveAttribute('aria-selected', 'true');
     await expect(args.onClick).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Disabled = {

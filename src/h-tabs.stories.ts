@@ -86,7 +86,9 @@ const render = (args: TabsArgs) => html`
   </h-tabs>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: TabsArgs }) => {
     const canvas = within(canvasElement);
@@ -98,6 +100,10 @@ export const Playground = {
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent('recent activity');
     await expect(args.onChange).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Contained = {

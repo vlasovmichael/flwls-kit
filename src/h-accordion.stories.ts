@@ -68,7 +68,9 @@ const render = (args: AccordionArgs) => html`
   </h-accordion>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: AccordionArgs }) => {
     const accordion = canvasElement.querySelector('h-accordion') as HTMLElement;
@@ -86,6 +88,10 @@ export const Playground = {
     await expect(headers[1]).toHaveAttribute('aria-expanded', 'true');
     await expect(args.onChange).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Single = {

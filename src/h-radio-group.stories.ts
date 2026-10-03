@@ -110,7 +110,9 @@ const render = (args: RadioGroupArgs) => html`
   ></h-radio-group>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: RadioGroupArgs }) => {
     const group = canvasElement.querySelector('h-radio-group') as HTMLElement & {
@@ -124,6 +126,10 @@ export const Playground = {
     await expect(radios[2]).toHaveAttribute('aria-checked', 'true');
     await expect(args.onChange).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Small = {

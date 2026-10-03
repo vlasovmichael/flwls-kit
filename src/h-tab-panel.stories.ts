@@ -42,11 +42,17 @@ const render = (args: TabPanelArgs) => html`
   </h-tabs>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('tab', { name: 'Details' }));
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent('Details panel.');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
