@@ -1,8 +1,6 @@
-import { LitElement, css, html, svg } from 'lit';
-import { EASE, GLYPHS, SPRING, play } from './glyphs.js';
-
-const icon = (paths: ReturnType<typeof svg>) =>
-  html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+import { LitElement, css, html } from 'lit';
+import './h-icon.js';
+import { EASE, SPRING, play } from './motion.js';
 
 const FOCUSABLE = [
   'button:not([disabled])',
@@ -76,15 +74,6 @@ export class HDialog extends LitElement {
       background: var(--attn-wash);
       color: var(--attn);
     }
-    .icon {
-      width: 1rem;
-      height: 1rem;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
     h2 {
       margin: 0;
       font-family: var(--display);
@@ -117,9 +106,9 @@ export class HDialog extends LitElement {
       background: transparent;
       color: var(--ink-3);
     }
-    .close .icon {
-      width: 0.95rem;
-      height: 0.95rem;
+    .close h-icon {
+      width: var(--space-4);
+      height: var(--space-4);
     }
     /* Отступ до кнопок держит разметка компонента: текст в слоте бывает голой строкой. */
     .body {
@@ -290,7 +279,9 @@ export class HDialog extends LitElement {
       >
         <slot name="header">
           <header>
-            ${this.danger ? html`<span class="glyph">${icon(GLYPHS.warn)}</span>` : ''}
+            ${this.danger
+              ? html`<span class="glyph"><h-icon name="triangle-alert"></h-icon></span>`
+              : ''}
             <h2 id=${`${this.#uid}-title`}>${this.title}</h2>
             <button
               type="button"
@@ -300,7 +291,7 @@ export class HDialog extends LitElement {
                 this.close("cancel");
               }}
             >
-              ${icon(GLYPHS.close)}
+              <h-icon name="x"></h-icon>
             </button>
           </header>
         </slot>
@@ -325,9 +316,8 @@ export class HDialog extends LitElement {
               this.close("confirm");
             }}
           >
-            ${this.danger ? icon(GLYPHS.trash) : icon(GLYPHS.check)}<slot name="confirm"
-              >${this.confirmLabel}</slot
-            >
+            <h-icon name=${this.danger ? 'trash-2' : 'check'}></h-icon>
+            <slot name="confirm">${this.confirmLabel}</slot>
           </button>
           </footer>
         </slot>

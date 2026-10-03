@@ -45,7 +45,7 @@ export const parameters = {
       order: [
         'Introduction',
         'Style Guide',
-        ['Colors', 'Typography', 'Space', 'Radius', 'Shadow', 'Border Width', 'Opacity', 'Breakpoints', 'Layers', 'Motion'],
+        ['Colors', 'Icons', 'Typography', 'Space', 'Radius', 'Shadow', 'Border Width', 'Opacity', 'Breakpoints', 'Layers', 'Motion'],
         'Components',
         ['Actions', 'Form Controls', 'Overlays', 'Display', 'Navigation'],
         'Engineering Resources',

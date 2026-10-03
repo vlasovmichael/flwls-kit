@@ -1,6 +1,7 @@
 import { html } from 'lit';
 import { expect, fn, userEvent } from 'storybook/test';
 import './h-button.ts';
+import './h-icon.ts';
 
 type Args = {
   variant: 'neutral' | 'primary' | 'danger' | 'ghost' | 'positive' | 'negative';
@@ -126,7 +127,7 @@ export const IconButton = {
   name: 'Icon button',
   render: () => html`
     <h-icon-button label="Close dialog" @click=${fn()}>
-      <span aria-hidden="true">×</span>
+      <h-icon name="x"></h-icon>
     </h-icon-button>
   `,
   parameters: {

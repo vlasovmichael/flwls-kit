@@ -8,6 +8,7 @@ export {
 } from './h-toast-stack.js';
 export { HSelect, type SelectOption } from './h-select.js';
 export { HButton, HIconButton } from './h-button.js';
+export { HIcon, ICON_NAMES, type IconName, type IconSize } from './h-icon.js';
 export { HCard, type CardVariant } from './h-card.js';
 export { HBadge, type BadgeSize, type BadgeTone } from './h-badge.js';
 export { HTag } from './h-tag.js';

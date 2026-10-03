@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit';
+import './h-icon.js';
 
 export type SelectOption = { label: string; value: string };
 
@@ -259,9 +260,7 @@ export class HSelect extends LitElement {
         @keydown=${this.#keyDown}
       >
         <span>${selected || this.placeholder}</span>
-        <svg viewBox="0 0 24 24" class="icon chevron" aria-hidden="true">
-          <path d="m6 9 6 6 6-6"></path>
-        </svg>
+        <h-icon name="chevron-down" class="icon chevron"></h-icon>
       </button>
       <ul
         id=${listId}
@@ -287,9 +286,7 @@ export class HSelect extends LitElement {
               }}
             >
               ${option.label}
-              <svg viewBox="0 0 24 24" class="icon tick" aria-hidden="true">
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
+              <h-icon name="check" class="icon tick"></h-icon>
             </li>
           `,
         )}
