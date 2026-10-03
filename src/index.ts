@@ -13,6 +13,11 @@ export { HBadge, type BadgeSize, type BadgeTone } from './h-badge.js';
 export { HTag } from './h-tag.js';
 export { HEmptyState, type EmptyStateTone } from './h-empty-state.js';
 export { HSkeleton, type SkeletonVariant } from './h-skeleton.js';
+export {
+  HTooltip,
+  type TooltipAlign,
+  type TooltipSide,
+} from './h-tooltip.js';
 export { HField, HTextarea, type FieldSize } from './h-field.js';
 export {
   HSegmentedControl,
