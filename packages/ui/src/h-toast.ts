@@ -129,12 +129,16 @@ export class HToast extends LitElement {
     this.message = '';
     this.tone = 'info';
     this.open = false;
-    this.duration = 2400;
+    this.duration = 5000;
     this.dismissible = true;
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this.addEventListener('pointerenter', this.#pause);
+    this.addEventListener('focusin', this.#pause);
+    this.addEventListener('pointerleave', this.#resume);
+    this.addEventListener('focusout', this.#resume);
     this.#schedule();
   }
 
@@ -148,10 +152,22 @@ export class HToast extends LitElement {
       this.#schedule();
     }
 
-    if (changed.get('open') === false && this.open) {
+    // Первая отрисовка тоже вход: прежнее значение там undefined, а не false.
+    if (changed.has('open') && this.open && changed.get('open') !== true) {
       this.#enter();
     }
   }
+
+  // Под курсором и при фокусе таймер стоит: сообщение должно успеть прочитаться (WCAG 2.2.1).
+  #pause = () => {
+    this.#clearTimer();
+  };
+
+  #resume = () => {
+    if (!this.matches(':hover') && !this.matches(':focus-within')) {
+      this.#schedule();
+    }
+  };
 
   #clearTimer() {
     if (this.#timer) {
@@ -177,12 +193,17 @@ export class HToast extends LitElement {
       play(
         card,
         [
-          { opacity: 0, transform: 'translateY(var(--space-3)) scale(.98)' },
+          { opacity: 0, transform: 'translateY(12px) scale(.98)' },
           { opacity: 1, transform: 'none' },
         ],
-        { duration: 220, easing: SPRING },
+        { duration: 240, easing: SPRING },
       );
     }
+  }
+
+  /** Ошибку и предупреждение диктор читает сразу, остальное — в паузе. */
+  #urgent() {
+    return ['warning', 'error', 'bad'].includes(this.tone);
   }
 
   #iconName() {
@@ -217,16 +238,30 @@ export class HToast extends LitElement {
         }),
       );
     };
+    // Уход сначала доигрывает анимацию, и только потом карточка исчезает и стек её убирает.
     const card = this.renderRoot.querySelector('.toast');
-    if (card) {
-      play(
-        card,
-        [{ opacity: 1 }, { opacity: 0, transform: 'translateY(var(--space-2))' }],
-        { duration: 160, easing: EASE, fill: 'forwards' },
-      );
+    const out = card
+      ? play(
+          card,
+          [{ opacity: 1 }, { opacity: 0, transform: 'translateY(8px) scale(.98)' }],
+          { duration: 180, easing: EASE, fill: 'forwards' },
+        )
+      : null;
+
+    if (!out) {
+      done();
+      return;
     }
 
-    done();
+    // Скрытая вкладка может не доиграть анимацию: страховка по времени, событие — один раз.
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      done();
+    };
+    out.onfinish = finish;
+    setTimeout(finish, 260);
   }
 
   #onAction(event: Event) {
@@ -239,7 +274,11 @@ export class HToast extends LitElement {
 
   render() {
     return html`
-      <section class="toast" role="status" @click=${this.#onAction}>
+      <section
+        class="toast"
+        role=${this.#urgent() ? 'alert' : 'status'}
+        @click=${this.#onAction}
+      >
         <span class="mark">
           <slot name="icon"><h-icon name=${this.#iconName()}></h-icon></slot>
         </span>

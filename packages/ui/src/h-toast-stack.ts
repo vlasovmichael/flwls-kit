@@ -1,6 +1,8 @@
 import { LitElement, css, html } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
 import type { ToastDismissReason, ToastTone } from './h-toast.js';
 import './h-toast.js';
+import { SPRING, play } from './motion.js';
 
 export type ToastPosition =
   | 'top-start'
@@ -81,12 +83,13 @@ export class HToastStack extends LitElement {
       title: options.title ?? '',
       message: options.message,
       tone: options.tone ?? 'info',
-      duration: options.duration ?? 2400,
+      duration: options.duration ?? 5000,
       dismissible: options.dismissible ?? true,
     };
 
-    this.#items = [...this.#items, item];
-    this.requestUpdate();
+    this.#reflow(() => {
+      this.#items = [...this.#items, item];
+    });
     return id;
   }
 
@@ -98,8 +101,9 @@ export class HToastStack extends LitElement {
       return;
     }
 
-    this.#items = this.#items.filter((candidate) => candidate.id !== id);
-    this.requestUpdate();
+    this.#reflow(() => {
+      this.#items = this.#items.filter((candidate) => candidate.id !== id);
+    });
     this.dispatchEvent(
       new CustomEvent('dismiss', {
         bubbles: true,
@@ -107,6 +111,33 @@ export class HToastStack extends LitElement {
         detail: { id, reason },
       }),
     );
+  }
+
+  // Соседи не прыгают при появлении и уходе: запоминаем их место и доводим из него (FLIP).
+  #reflow(change: () => void) {
+    const before = new Map<string, number>();
+    // До первой отрисовки корня ещё нет — сдвигать некого.
+    const root = this.shadowRoot;
+    for (const toast of root?.querySelectorAll<HTMLElement>('h-toast') ?? []) {
+      before.set(toast.dataset.id ?? '', toast.getBoundingClientRect().top);
+    }
+
+    change();
+    this.requestUpdate();
+
+    void this.updateComplete.then(() => {
+      for (const toast of this.renderRoot.querySelectorAll<HTMLElement>('h-toast')) {
+        const was = before.get(toast.dataset.id ?? '');
+        if (was === undefined) continue;
+        const shift = was - toast.getBoundingClientRect().top;
+        if (Math.abs(shift) < 1) continue;
+        play(
+          toast,
+          [{ transform: `translateY(${String(shift)}px)` }, { transform: 'none' }],
+          { duration: 260, easing: SPRING },
+        );
+      }
+    });
   }
 
   #onDismiss = (event: CustomEvent<{ reason: ToastDismissReason }>) => {
@@ -119,7 +150,10 @@ export class HToastStack extends LitElement {
   };
 
   render() {
-    return html`${this.#items.slice(0, this.maxVisible).map(
+    // Ключ по id: без него Lit переиспользует ушедший элемент для соседа, и сосед пропадает.
+    return html`${repeat(
+      this.#items.slice(0, this.maxVisible),
+      (item) => item.id,
       (item) => html`
         <h-toast
           data-id=${item.id}
