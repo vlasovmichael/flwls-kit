@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import type { BadgeTone } from './h-badge.ts';
+import './h-icon.js';
 
 /** Тег хранит выбранное значение. */
 export class HTag extends LitElement {
@@ -112,7 +113,7 @@ export class HTag extends LitElement {
               aria-label=${removeLabel}
               @click=${this.#remove}
             >
-              <span aria-hidden="true">×</span>
+              <h-icon name="x"></h-icon>
             </button>
           `
         : null}

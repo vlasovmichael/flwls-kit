@@ -1,11 +1,9 @@
-import { LitElement, css, html, svg } from 'lit';
-import { EASE, GLYPHS, SPRING, play } from './glyphs.js';
+import { LitElement, css, html } from 'lit';
+import './h-icon.js';
+import { EASE, SPRING, play } from './motion.js';
 
 export type ToastTone = 'info' | 'success' | 'warning' | 'error' | 'ok' | 'bad';
 export type ToastDismissReason = 'timeout' | 'close' | 'action';
-
-const icon = (paths: ReturnType<typeof svg>) =>
-  html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
 
 /** Короткое сообщение о результате действия с понятным способом закрыть его. */
 export class HToast extends LitElement {
@@ -67,16 +65,6 @@ export class HToast extends LitElement {
     :host([tone='bad']) .mark {
       background: var(--loss-wash);
       color: var(--loss);
-    }
-
-    .icon {
-      width: var(--space-4);
-      height: var(--space-4);
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
     }
 
     .content {
@@ -197,16 +185,16 @@ export class HToast extends LitElement {
     }
   }
 
-  #glyph() {
+  #iconName() {
     if (this.tone === 'success' || this.tone === 'ok') {
-      return GLYPHS.check;
+      return 'check';
     }
 
     if (this.tone === 'warning' || this.tone === 'error' || this.tone === 'bad') {
-      return GLYPHS.warn;
+      return 'triangle-alert';
     }
 
-    return svg`<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>`;
+    return 'info';
   }
 
   /** Закрывает уведомление и сообщает стеку, почему оно ушло. */
@@ -252,7 +240,9 @@ export class HToast extends LitElement {
   render() {
     return html`
       <section class="toast" role="status" @click=${this.#onAction}>
-        <span class="mark"><slot name="icon">${icon(this.#glyph())}</slot></span>
+        <span class="mark">
+          <slot name="icon"><h-icon name=${this.#iconName()}></h-icon></slot>
+        </span>
         <div class="content">
           ${this.title ? html`<p class="title">${this.title}</p>` : null}
           <p class="message"><slot>${this.message}</slot></p>
@@ -268,7 +258,7 @@ export class HToast extends LitElement {
                   this.dismiss('close');
                 }}
               >
-                ${icon(GLYPHS.close)}
+                <h-icon name="x"></h-icon>
               </button>
             `
           : null}
