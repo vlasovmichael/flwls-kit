@@ -20,59 +20,101 @@ abstract class HCheckControl extends LitElement {
     size: { type: String, reflect: true },
   };
 
+  // Нативный input остаётся ради формы и клавиатуры; рисунок — свой, размеры — из переменных.
   static styles = [css`
     :host {
+      --box: 18px;
+      --gap: var(--space-2);
       display: block;
       color: var(--ink);
       font-family: var(--sans);
     }
 
+    :host([size='sm']) {
+      --box: 16px;
+    }
+
+    :host([size='lg']) {
+      --box: 22px;
+    }
+
     .field {
       display: flex;
       flex-direction: column;
-      gap: var(--space-2);
+      gap: var(--space-1);
     }
 
     .control {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-2);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--gap);
+      width: fit-content;
       cursor: pointer;
     }
 
+    .box {
+      position: relative;
+      flex: none;
+      display: inline-grid;
+      width: var(--box-w, var(--box));
+      height: var(--box);
+    }
+
     input {
-      flex: 0 0 auto;
-      width: var(--space-5);
-      height: var(--space-5);
+      appearance: none;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
       margin: 0;
-      accent-color: var(--accent);
+      border: var(--border-thin) solid var(--rule-strong);
+      background: var(--panel);
       cursor: pointer;
+      transition:
+        background-color 140ms ease,
+        border-color 140ms ease;
+    }
+
+    .control:hover input:not(:disabled) {
+      border-color: var(--ink-3);
     }
 
     input:focus-visible {
       outline: var(--border-thick) solid var(--accent);
-      outline-offset: var(--space-1);
+      outline-offset: 2px;
     }
 
-    input:disabled,
+    input[aria-invalid='true'] {
+      border-color: var(--loss);
+    }
+
     :host([disabled]) .control {
       cursor: not-allowed;
-    }
-
-    input:disabled {
       opacity: var(--opacity-disabled);
     }
 
-    .label {
-      padding-top: var(--space-1);
-      font-size: var(--text-base);
-      line-height: 1.3;
+    input:disabled {
+      cursor: not-allowed;
     }
 
+    .label {
+      font-size: var(--text-base);
+      line-height: 1.35;
+    }
+
+    :host([size='sm']) .label {
+      font-size: var(--text-small);
+    }
+
+    :host([size='lg']) .label {
+      font-size: var(--text-lead);
+    }
+
+    /* Описание и ошибка начинаются там же, где текст подписи. */
     .description,
     .error {
-      padding-left: calc(var(--space-5) + var(--space-2));
+      padding-left: calc(var(--box-w, var(--box)) + var(--gap));
       font-size: var(--text-small);
+      line-height: 1.4;
     }
 
     .description {
@@ -88,32 +130,10 @@ abstract class HCheckControl extends LitElement {
       display: none;
     }
 
-    :host([size='sm']) input {
-      width: var(--space-4);
-      height: var(--space-4);
-    }
-
-    :host([size='sm']) .label {
-      font-size: var(--text-small);
-    }
-
-    :host([size='sm']) .description,
-    :host([size='sm']) .error {
-      padding-left: calc(var(--space-4) + var(--space-2));
-    }
-
-    :host([size='lg']) input {
-      width: var(--space-6);
-      height: var(--space-6);
-    }
-
-    :host([size='lg']) .label {
-      font-size: var(--text-lead);
-    }
-
-    :host([size='lg']) .description,
-    :host([size='lg']) .error {
-      padding-left: calc(var(--space-6) + var(--space-2));
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+      }
     }
   `];
 
@@ -214,6 +234,46 @@ abstract class HCheckControl extends LitElement {
 
 /** Чекбокс выбирает независимую опцию. */
 export class HCheckbox extends HCheckControl {
+  static styles = [
+    ...HCheckControl.styles,
+    css`
+      input {
+        border-radius: 5px;
+      }
+
+      input:checked,
+      input:indeterminate {
+        border-color: var(--accent);
+        background: var(--accent);
+      }
+
+      /* Галочка дорисовывается линией: штрих выезжает из нуля за 180 мс. */
+      .mark {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: var(--accent-ink);
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        pointer-events: none;
+      }
+
+      .mark path {
+        stroke-dasharray: 14;
+        stroke-dashoffset: 14;
+        transition: stroke-dashoffset 180ms ease-out;
+      }
+
+      input:checked:not(:indeterminate) ~ .mark .tick,
+      input:indeterminate ~ .mark .dash {
+        stroke-dashoffset: 0;
+      }
+    `,
+  ];
+
   static properties = {
     ...HCheckControl.properties,
     indeterminate: { type: Boolean, reflect: true },
@@ -245,6 +305,7 @@ export class HCheckbox extends HCheckControl {
     return html`
       <span class="field">
         <label class="control">
+          <span class="box">
           <input
             type="checkbox"
             .checked=${this.checked}
@@ -258,6 +319,11 @@ export class HCheckbox extends HCheckControl {
               this.change(event);
             }}
           >
+          <svg class="mark" viewBox="0 0 18 18" aria-hidden="true">
+            <path class="tick" d="M4.5 9.2 7.6 12.2 13.5 6" />
+            <path class="dash" d="M5 9h8" />
+          </svg>
+          </span>
           <span class="label">${this.label}</span>
         </label>
         ${this.renderMessages()}
@@ -270,29 +336,29 @@ customElements.define('h-checkbox', HCheckbox);
 
 /** Переключатель сообщает бинарное состояние. */
 export class HSwitch extends HCheckControl {
+  // Геометрия из трёх переменных: бегунок и его ход считаются от ширины и высоты трека.
   static styles = [
     ...HCheckControl.styles,
     css`
-      input {
-        appearance: none;
-        width: calc(var(--space-8) + var(--space-2));
-        height: var(--space-5);
-        border: var(--border-thin) solid var(--rule-strong);
-        border-radius: var(--radius-pill);
-        background: var(--panel-sunk);
-        transition: background 150ms var(--spring);
+      :host {
+        --box-w: 36px;
+        --box: 20px;
+        --pad: 2px;
       }
 
-      input::after {
-        display: block;
-        width: calc(var(--space-3) + var(--space-1));
-        height: calc(var(--space-3) + var(--space-1));
-        margin: var(--space-1);
+      :host([size='sm']) {
+        --box-w: 28px;
+        --box: 16px;
+      }
+
+      :host([size='lg']) {
+        --box-w: 44px;
+        --box: 24px;
+      }
+
+      input {
         border-radius: var(--radius-pill);
-        background: var(--panel);
-        box-shadow: var(--shadow);
-        content: '';
-        transition: transform 150ms var(--spring);
+        background: var(--panel-sunk);
       }
 
       input:checked {
@@ -300,43 +366,24 @@ export class HSwitch extends HCheckControl {
         background: var(--accent);
       }
 
-      input:checked::after {
-        transform: translateX(var(--space-4));
+      .thumb {
+        --inset: calc(var(--pad) + var(--border-thin));
+        position: absolute;
+        top: var(--inset);
+        left: var(--inset);
+        width: calc(var(--box) - 2 * var(--inset));
+        height: calc(var(--box) - 2 * var(--inset));
+        border-radius: var(--radius-pill);
+        background: var(--ink-3);
+        pointer-events: none;
+        transition:
+          transform 200ms var(--spring),
+          background-color 140ms ease;
       }
 
-      :host([size='sm']) input {
-        width: calc(var(--space-6) + var(--space-2));
-        height: var(--space-4);
-      }
-
-      :host([size='sm']) input::after {
-        width: var(--space-2);
-        height: var(--space-2);
-      }
-
-      :host([size='sm']) input:checked::after {
-        transform: translateX(var(--space-4));
-      }
-
-      :host([size='lg']) input {
-        width: calc(var(--space-8) + var(--space-4));
-        height: var(--space-6);
-      }
-
-      :host([size='lg']) input::after {
-        width: var(--space-4);
-        height: var(--space-4);
-      }
-
-      :host([size='lg']) input:checked::after {
-        transform: translateX(calc(var(--space-5) + var(--space-1)));
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        input,
-        input::after {
-          transition: none;
-        }
+      input:checked + .thumb {
+        background: var(--accent-ink);
+        transform: translateX(calc(var(--box-w) - var(--box)));
       }
     `,
   ];
@@ -345,6 +392,7 @@ export class HSwitch extends HCheckControl {
     return html`
       <span class="field">
         <label class="control">
+          <span class="box">
           <input
             type="checkbox"
             role="switch"
@@ -359,6 +407,8 @@ export class HSwitch extends HCheckControl {
               this.change(event);
             }}
           >
+          <span class="thumb" aria-hidden="true"></span>
+          </span>
           <span class="label">${this.label}</span>
         </label>
         ${this.renderMessages()}
