@@ -18,12 +18,17 @@ export class HSkeleton extends LitElement {
       display: block;
     }
 
+    /* Тон от цвета текста, а не от поверхности: заметен на любом фоне в обеих темах.
+       Блик бежит слева направо — тот же знак «здесь ждут данные», что в проектах. */
     .skeleton {
+      --tone: color-mix(in srgb, var(--ink) 8%, transparent);
+      --shine: color-mix(in srgb, var(--ink) 15%, transparent);
       width: var(--skeleton-width, 100%);
       height: var(--skeleton-height, var(--text-body));
       border-radius: var(--radius-sm);
-      background: var(--panel-raised);
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--tone) 30%, var(--shine) 50%, var(--tone) 70%)
+        0 0 / 300% 100% no-repeat var(--tone);
+      animation: skeleton-shine 1.4s ease-in-out infinite;
     }
 
     :host([variant='circle']) .skeleton {
@@ -42,15 +47,20 @@ export class HSkeleton extends LitElement {
       box-shadow: var(--shadow);
     }
 
-    @keyframes skeleton-pulse {
-      50% {
-        opacity: var(--opacity-muted);
+    @keyframes skeleton-shine {
+      from {
+        background-position: 100% 0;
+      }
+
+      to {
+        background-position: 0 0;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .skeleton {
         animation: none;
+        background: var(--tone);
       }
     }
   `;
