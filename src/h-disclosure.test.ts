@@ -31,7 +31,8 @@ test.each([false, true])('раскрытие отражает open=%s', async (o
 
   expect(disclosure.hasAttribute('open')).toBe(open);
   expect(button.getAttribute('aria-expanded')).toBe(String(open));
-  expect(region.hidden).toBe(!open);
+  // Свёрнутая область недоступна диктору и Tab через inert, а не hidden: так её можно анимировать.
+  expect(region.inert).toBe(!open);
   disclosure.remove();
 });
 

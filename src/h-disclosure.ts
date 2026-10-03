@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import './h-icon.js';
-import { EASE, play } from './motion.js';
 
 let disclosureId = 0;
 
@@ -13,9 +12,15 @@ export class HDisclosure extends LitElement {
     disabled: { type: Boolean, reflect: true },
   };
 
+  // Заголовок и содержимое — одна карточка. Высота едет через grid-template-rows 0fr → 1fr:
+  // плавно, без замеров в JS, а отступы во внутреннем блоке сжимаются вместе с ним.
   static styles = css`
     :host {
       display: block;
+      overflow: hidden;
+      border: var(--border-thin) solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
       color: var(--ink);
       font-family: var(--sans);
     }
@@ -25,20 +30,20 @@ export class HDisclosure extends LitElement {
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      min-height: calc(var(--space-6) + var(--space-3));
-      padding: var(--space-2) var(--space-3);
-      border: var(--border-thin) solid var(--rule);
-      border-radius: var(--radius-sm);
-      background: var(--panel);
+      min-height: calc(var(--space-8) + var(--space-2));
+      padding: var(--space-2) var(--space-4);
+      border: 0;
+      background: transparent;
       color: var(--ink);
       cursor: pointer;
       font: inherit;
       font-size: var(--text-base);
       font-weight: 500;
       text-align: left;
+      transition: background-color 140ms ease;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       background: var(--panel-raised);
     }
 
@@ -49,14 +54,15 @@ export class HDisclosure extends LitElement {
 
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);
-      outline-offset: var(--space-1);
+      outline-offset: -2px;
+      border-radius: var(--radius-sm);
     }
 
     .indicator {
       flex: 0 0 auto;
       margin-left: var(--space-3);
       color: var(--ink-3);
-      transition: transform 260ms var(--spring);
+      transition: transform 280ms var(--spring);
     }
 
     :host([open]) .indicator {
@@ -64,20 +70,41 @@ export class HDisclosure extends LitElement {
     }
 
     .region {
-      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :host([open]) .region {
+      grid-template-rows: 1fr;
+    }
+
+    .clip {
+      min-height: 0;
       overflow: hidden;
-      padding: var(--space-3);
-      border: var(--border-thin) solid var(--rule-soft);
-      border-top: 0;
-      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-      background: var(--panel-raised);
+    }
+
+    .body {
+      padding: 0 var(--space-4) var(--space-4);
       color: var(--ink-2);
       font-size: var(--text-body);
       line-height: 1.5;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition:
+        opacity 220ms ease,
+        transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :host([open]) .body {
+      opacity: 1;
+      transform: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .indicator {
+      .indicator,
+      .region,
+      .body {
         transition: none;
       }
     }
@@ -97,35 +124,6 @@ export class HDisclosure extends LitElement {
   }
 
   /** Переключаем состояние только по действию пользователя. */
-  // Высота анимируется от измеренной: CSS не умеет переходить к height: auto.
-  updated(changed: Map<PropertyKey, unknown>) {
-    if (!changed.has('open') || changed.get('open') === undefined) return;
-    const region = this.renderRoot.querySelector<HTMLElement>('.region');
-    if (!region) return;
-
-    if (this.open) {
-      const height = `${String(region.scrollHeight)}px`;
-      play(region, [{ height: '0px', opacity: 0 }, { height, opacity: 1 }], {
-        duration: 240,
-        easing: EASE,
-      });
-      return;
-    }
-
-    // Свернуть: секция видна, пока сжимается, и прячется только по концу анимации.
-    region.hidden = false;
-    const height = `${String(region.scrollHeight)}px`;
-    const out = play(region, [{ height, opacity: 1 }, { height: '0px', opacity: 0 }], {
-      duration: 200,
-      easing: EASE,
-    });
-    const hide = () => {
-      if (!this.open) region.hidden = true;
-    };
-    if (out) out.onfinish = hide;
-    else hide();
-  }
-
   #toggle() {
     if (this.disabled) {
       return;
@@ -159,9 +157,9 @@ export class HDisclosure extends LitElement {
         class="region"
         role="region"
         aria-labelledby=${this.#buttonId}
-        ?hidden=${!this.open}
+        ?inert=${!this.open}
       >
-        <slot></slot>
+        <div class="clip"><div class="body"><slot></slot></div></div>
       </div>
     `;
   }
