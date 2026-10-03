@@ -4,6 +4,15 @@ import { EASE, GLYPHS, SPRING, play } from './glyphs.js';
 const icon = (paths: ReturnType<typeof svg>) =>
   html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
 
+const FOCUSABLE = [
+  'button:not([disabled])',
+  '[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ');
+
 /** Окно подтверждения: `confirm` или `cancel` приходят после анимации ухода. */
 export class HDialog extends LitElement {
   static properties = {
@@ -176,24 +185,22 @@ export class HDialog extends LitElement {
     if (event.key === 'Escape' && this.open) this.close('cancel');
   };
 
+  // Фокус живёт в двух деревьях: кнопки окна — в shadow DOM, поля из слотов — в light DOM.
   #trapFocus = (event: KeyboardEvent) => {
     if (event.key !== 'Tab') return;
     const card = this.renderRoot.querySelector('section');
-    const selector = [
-      'button:not([disabled])',
-      '[href]',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
-    ].join(', ');
-    const focusable = [...(card?.querySelectorAll<HTMLElement>(selector) ?? [])];
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable.at(-1);
-    if (event.shiftKey && document.activeElement === first) {
+    const ownFocusable = [...(card?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])];
+    const slotted = [...this.querySelectorAll<HTMLElement>(FOCUSABLE)];
+    const footerSlotted = this.querySelector('[slot="footer"]') !== null;
+    const first = ownFocusable.at(0) ?? slotted.at(0);
+    const last = footerSlotted ? slotted.at(-1) : (ownFocusable.at(-1) ?? slotted.at(-1));
+    if (!first || !last) return;
+    // document.activeElement видит только хост; внутренний фокус — у shadowRoot.
+    const active = this.shadowRoot?.activeElement ?? document.activeElement;
+    if (event.shiftKey && active === first) {
       event.preventDefault();
-      last?.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
       event.preventDefault();
       first.focus();
     }
