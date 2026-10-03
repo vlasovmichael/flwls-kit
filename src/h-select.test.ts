@@ -10,11 +10,11 @@ test('список сообщает выбранное значение', async 
   document.body.append(select);
   await select.updateComplete;
 
-  const changed = new Promise<CustomEvent<string>>((resolve) => {
+  const changed = new Promise<CustomEvent<{ value: string }>>((resolve) => {
     select.addEventListener(
       'change',
       (event) => {
-        resolve(event as CustomEvent<string>);
+        resolve(event as CustomEvent<{ value: string }>);
       },
       { once: true },
     );
@@ -23,7 +23,24 @@ test('список сообщает выбранное значение', async 
   button.click();
   const option = select.querySelectorAll('.select-option')[1] as HTMLLIElement;
   option.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-  expect((await changed).detail).toBe('two');
+  expect((await changed).detail.value).toBe('two');
+  select.remove();
+});
+
+test('селект связывает кнопку со списком и отключается', async () => {
+  const select = document.createElement('h-select') as HSelect;
+  select.options = [{ label: 'Первый', value: 'one' }];
+  select.disabled = true;
+  document.body.append(select);
+  await select.updateComplete;
+
+  const button = select.querySelector('.select-button') as HTMLButtonElement;
+  const list = select.querySelector('.select-list') as HTMLElement;
+
+  expect(button.disabled).toBe(true);
+  expect(button.getAttribute('aria-controls')).toBe(list.id);
+  button.click();
+  expect(select.dataset.open).not.toBe('true');
   select.remove();
 });
 
