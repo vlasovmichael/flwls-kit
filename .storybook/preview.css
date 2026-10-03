@@ -6,8 +6,16 @@ body,
   background: var(--ground) !important;
   color: var(--ink);
 }
-.sbdocs-content {
+/* Текст вокруг компонентов в примерах — шрифтами кита, а не браузерным Times. */
+.sbdocs-content,
+.sb-show-main,
+.docs-story {
   font-family: var(--sans);
+  font-size: var(--text-base);
+}
+.sb-show-main code,
+.docs-story code {
+  font-family: var(--mono);
 }
 .sbdocs-content :where(h1, h2, h3, h4) {
   font-family: var(--display);
