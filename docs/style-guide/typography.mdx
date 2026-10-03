@@ -1,0 +1,39 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Style Guide/Typography" />
+
+# Typography
+
+## Font family
+
+Geologica for headings, IBM Plex Sans for interface text, IBM Plex Mono for numbers in columns.
+
+<ds-tokens kind="font"></ds-tokens>
+
+## Font size
+
+The scale is built for dense interfaces: body text is 14 px, a table cell is 13 px. A size that is not
+on the scale is not written in styles.
+
+<ds-tokens kind="text"></ds-tokens>
+
+## Letter spacing
+
+Tight tracking for large display text, wide tracking for small uppercase labels.
+
+<ds-tokens kind="tracking"></ds-tokens>
+
+## Headings
+
+| Level | Font | Size | Tracking |
+| --- | --- | --- | --- |
+| Page title | `--display` | `--text-h1` | `--tracking-snug` |
+| Card title | `--display` | `--text-h2` | normal |
+| Block title | `--display` | `--text-h3` | normal |
+| Column header | `--sans`, uppercase | `--text-label` | `--tracking-wide` |
+
+## Rules
+
+- Numbers in tables use `--mono` with `font-variant-numeric: tabular-nums` so digits line up.
+- A card title is `--text-h2`, a page title `--text-h1`. Never skip more than one step between them.
+- Below `--text-label` only for service labels such as LIVE.

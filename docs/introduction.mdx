@@ -1,0 +1,40 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# flwls-kit
+
+The shared design system for every flwls project: the trading dashboard, health and guides. One set of
+tokens and components, so interfaces look and behave the same, and a color or spacing change is made
+in exactly one place.
+
+Use the **Theme** switch in the toolbar to see every page and example in light, dark or system theme.
+
+## Principles
+
+- **Numbers before decoration.** Our interfaces are dense: tables, charts, money. Numbers use the mono
+  font so columns line up.
+- **Color carries meaning.** Green is gain, red is loss, amber is caution. Color is never decorative —
+  otherwise it stops meaning anything.
+- **One action per screen.** Only the primary button gets the accent. Everything else stays neutral.
+- **Tokens, not values.** Styles never contain `13px` or `#2b5bd7` — only `var(--text-body)` and
+  `var(--accent)`. A value that is not on a scale is a question, not a decision.
+
+## What is inside
+
+| Section | What you find |
+| --- | --- |
+| Style Guide | Tokens: color, typography, space, radius, shadow, border width, opacity, breakpoints, layers, motion |
+| Components | Web components with live examples, controls and interaction tests |
+| Engineering Resources | How to install, release and contribute |
+
+## Token layers
+
+Tokens come in two layers, the same way large design systems do it:
+
+1. **Primitives** — `--color-gray-50`, `--color-blue-600`. Raw values, identical in every theme. Never
+   used in product code directly.
+2. **Semantic tokens** — `--ground`, `--ink`, `--gain`. Named by role, not by hue. They point to
+   primitives and switch with the theme. Product code uses only these.
+
+So a theme can change a shade without touching meaning: `--loss` stays "loss" whatever red it is.

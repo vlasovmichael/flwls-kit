@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Engineering Resources/Contributing" />
+
+# Contributing
+
+## A new token
+
+1. Is there already a token for this role? Search the Style Guide first.
+2. Colors: add the raw value to the palette (`--color-…`), then a semantic token pointing to it in
+   **every** theme block. A semantic token never contains a raw color — the tests reject it.
+3. Pick a name no project uses. Same-named tokens override each other silently.
+4. Add it to `.storybook/docs/catalog.ts` with its purpose. The tests fail until every token is documented.
+
+## A new component
+
+A component joins the kit when **two or more projects** need it. A one-off belongs in the project.
+
+Every component ships with:
+
+- a `*.stories.ts` file with a docs description: when to use, when not to, properties, events, slots;
+- **controls** (`args`) for every public property;
+- an interactive story with a `play` function that tests the behavior (open, close, keyboard);
+- a unit test (`*.test.ts`);
+- styles only from tokens, both themes checked, no raw values.
+
+## Review checklist
+
+- [ ] Works in light, dark and system theme.
+- [ ] Keyboard: reachable, operable, visible focus, Escape closes overlays.
+- [ ] Accessibility panel has no violations.
+- [ ] `npm run verify` is green.

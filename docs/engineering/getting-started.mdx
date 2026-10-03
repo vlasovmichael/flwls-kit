@@ -1,0 +1,52 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Engineering Resources/Getting Started" />
+
+# Getting started
+
+## Install
+
+The package is installed from GitHub by tag, so a project never changes version by accident:
+
+```bash
+npm i -D "@flwls/ui@github:vlasovmichael/flwls-kit#ui-v0.4.0"
+```
+
+Docker images based on Alpine need `git` for this, and the lock file stores an SSH URL. In the build stage:
+
+```dockerfile
+RUN apk add --no-cache git \
+ && git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+```
+
+## Tokens
+
+Import the CSS once in **every page entry**, before project styles. A page that misses it loses its
+colors silently — builds and tests stay green.
+
+```js
+import '@flwls/ui/tokens.css';
+import './styles/app.scss';
+```
+
+## Components
+
+```js
+import '@flwls/ui';
+```
+
+```html
+<h-stat label="Equity" value="$105.09" note="+0.4% today" tone="data"></h-stat>
+```
+
+Components are Lit web components: they work in vanilla JS, Ember, React or anything else that renders HTML.
+
+## Theme
+
+Dark theme is `data-theme="dark"` on `<html>`, light is `data-theme="light"`. Without the attribute
+the theme follows the operating system.
+
+## Project tokens
+
+A project may add its own tokens, but **always with a project prefix** (`--hl-…`, `--health-…`). A
+project token with the same name as a kit token silently overrides it — this has broken pages before.

@@ -2,7 +2,7 @@ import '../packages/ui/src/tokens.css';
 import './preview.css';
 import './docs/ds-tokens.ts';
 
-// Тема кита ставится атрибутом на <html>, как в проектах: «Система» снимает его.
+// Тема кита ставится атрибутом на <html>, как в проектах: «System» снимает его.
 const applyTheme = (theme: string) => {
   const root = document.documentElement;
   if (theme === 'system') root.removeAttribute('data-theme');
@@ -11,14 +11,14 @@ const applyTheme = (theme: string) => {
 
 export const globalTypes = {
   theme: {
-    description: 'Тема',
+    description: 'Theme',
     toolbar: {
-      title: 'Тема',
+      title: 'Theme',
       icon: 'contrast',
       items: [
-        { value: 'system', title: 'Как в системе' },
-        { value: 'light', title: 'Светлая' },
-        { value: 'dark', title: 'Тёмная' },
+        { value: 'system', title: 'System' },
+        { value: 'light', title: 'Light' },
+        { value: 'dark', title: 'Dark' },
       ],
       dynamicTitle: true,
     },
@@ -39,7 +39,18 @@ export const tags = ['autodocs'];
 export const parameters = {
   a11y: { test: 'error' },
   backgrounds: { disable: true },
+  controls: { expanded: true, sort: 'requiredFirst' },
   options: {
-    storySort: { order: ['Введение', 'Основы', ['Цвет', 'Типографика', 'Отступы', 'Форма', 'Слои и движение'], 'Компоненты'] },
+    storySort: {
+      order: [
+        'Introduction',
+        'Style Guide',
+        ['Colors', 'Typography', 'Space', 'Radius', 'Shadow', 'Border Width', 'Opacity', 'Breakpoints', 'Layers', 'Motion'],
+        'Components',
+        ['Actions', 'Form Controls', 'Overlays', 'Display', 'Navigation'],
+        'Engineering Resources',
+        ['Getting Started', 'Release Process', 'Contributing'],
+      ],
+    },
   },
 };

@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { COLOR, PALETTE } from '../../.storybook/docs/catalog.ts';
+
+<Meta title="Style Guide/Colors" />
+
+# Colors
+
+Click a token name to copy `var(--token)`. Values are read from the live theme — switch **Theme** in
+the toolbar to compare light and dark.
+
+## Primitives
+
+Primitive colors are the building blocks of the color system. They are the same in every theme and are
+**not used in product code** — semantic tokens below point to them.
+
+{PALETTE.map((g) => (
+  <div key={g.id}>
+    <h3>{g.title}</h3>
+    <p>{g.note}</p>
+    <ds-tokens kind="palette" group={g.id}></ds-tokens>
+  </div>
+))}
+
+## Semantic
+
+Named by role, not by hue. These are the only colors product code uses.
+
+{COLOR.map((g) => (
+  <div key={g.id}>
+    <h3>{g.title}</h3>
+    <p>{g.note}</p>
+    <ds-tokens kind="color" group={g.id}></ds-tokens>
+  </div>
+))}
+
+## Choosing a color
+
+- Text on a surface is `--ink`, `--ink-2` or `--ink-3`. Text has no other colors.
+- Amounts, P&L and position side use `--gain` and `--loss`. A risk warning is `--caution`, never `--loss`.
+- A status without money (saved, network error) uses `--data` and `--attn`.
+- A background tint is always the `-wash` of the same color, never the base color with opacity.

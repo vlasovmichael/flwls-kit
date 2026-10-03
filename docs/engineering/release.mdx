@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Engineering Resources/Release Process" />
+
+# Release process
+
+Sources live in `packages/ui` on `main`. Projects install a **tag**, never a branch.
+
+1. Change tokens or components on `main`. `npm run verify` must be green: lint, types, unit and
+   token tests (two layers, dark themes in sync, every token documented).
+2. Bump `packages/ui/package.json` version.
+3. Split the package and merge it into the release branch:
+   ```bash
+   git subtree split --prefix=packages/ui main -b tmp-ui-split
+   git worktree add ../kit-release ui-release
+   cd ../kit-release && git merge --no-ff -m "build(ui): sources X.Y.Z" tmp-ui-split
+   ```
+4. Build `dist` on `main` (`npm run build -w packages/ui`), copy it into the release worktree, commit.
+5. Tag and push: `git tag -a ui-vX.Y.Z -m "@flwls/ui X.Y.Z"`, then push `main`, `ui-release` and the tag.
+
+Projects update on their own schedule by bumping the tag. A release never changes a project that did
+not ask for it.
+
+## Versioning
+
+- **Patch** — a fix with no visual change.
+- **Minor** — new tokens or components; existing ones keep their values.
+- **Major** — a token renamed, removed, or changed in value. List every project that must update.

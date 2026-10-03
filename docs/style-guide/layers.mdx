@@ -1,0 +1,13 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Style Guide/Layers" />
+
+# Layers
+
+Stacking order. Never write a raw `z-index` — only a token, otherwise a dropdown will one day end up under a sticky header.
+
+<ds-tokens kind="layer"></ds-tokens>
+
+## Rules
+
+Layers are global: a component never invents its own number between two layers.
