@@ -63,7 +63,7 @@ const render = (args: AlertArgs) => html`
     @dismiss=${args.onDismiss}
   >
     Your changes are available to everyone.
-    <h-button slot="action" size="sm" variant="ghost">Review changes</h-button>
+    <h-button slot="action" size="sm">Review changes</h-button>
   </h-alert>
 `;
 

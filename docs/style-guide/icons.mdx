@@ -5,8 +5,23 @@ import '../../.storybook/docs/ds-icons.ts';
 
 # Icons
 
-The kit ships only the Lucide icons registered below, so applications do not pay for the full library.
-Search the list by name, then use `<h-icon name="…">`.
+The kit ships a default set of common [Lucide](https://lucide.dev/icons) icons, imported one by one so
+applications do not pay for the whole library. Search the list by name, then use `<h-icon name="…">`.
+
+A project that needs another Lucide icon registers it under its own name — no kit release required:
+
+```js
+import { registerIcons } from '@flwls/ui';
+import { CandlestickChart } from 'lucide';
+
+registerIcons({ candles: CandlestickChart });
+```
+
+```html
+<h-icon name="candles"></h-icon>
+```
+
+An unknown name renders nothing and logs one warning in the console.
 
 Icons are decorative by default. Add a concise `label` only when an icon has meaning without nearby text.
 

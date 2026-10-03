@@ -157,3 +157,15 @@ test('вкладка без панели не получает пустую ARIA
   expect(tab.hasAttribute('aria-controls')).toBe(false);
   tabs.remove();
 });
+
+test('вкладки получают вид и ориентацию контейнера и следуют за их сменой', async () => {
+  const tabs = await appendTabs({ orientation: 'vertical' });
+  const [first] = children(tabs).tabs;
+  expect(first.dataset.variant).toBe('contained');
+  expect(first.dataset.orientation).toBe('vertical');
+
+  tabs.variant = 'wrap';
+  await tabs.updateComplete;
+  expect(first.dataset.variant).toBe('wrap');
+  tabs.remove();
+});

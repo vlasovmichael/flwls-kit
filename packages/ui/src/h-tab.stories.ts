@@ -17,6 +17,8 @@ Anatomy: its slotted text is the accessible tab label; h-tabs supplies selection
 export default {
   title: 'Components/Navigation/Tab',
   component: 'h-tab',
+  // Отдельно не показываются: документация вкладок — на странице Tabs.
+  tags: ['!dev', '!autodocs'],
   args: {
     value: 'details',
     disabled: false,

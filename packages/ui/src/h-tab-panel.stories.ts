@@ -15,6 +15,8 @@ Anatomy: h-tabs gives the panel its tabpanel role, label relationship, and hidde
 export default {
   title: 'Components/Navigation/Tab Panel',
   component: 'h-tab-panel',
+  // Отдельно не показываются: документация вкладок — на странице Tabs.
+  tags: ['!dev', '!autodocs'],
   args: {
     value: 'details',
   },

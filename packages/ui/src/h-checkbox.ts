@@ -66,7 +66,8 @@ abstract class HCheckControl extends LitElement {
       width: 100%;
       height: 100%;
       margin: 0;
-      border: var(--border-thin) solid var(--rule-strong);
+      /* Граница контрола — не тоньше 3:1 к фону (WCAG 1.4.11), поэтому --ink-3, а не --rule. */
+      border: var(--border-thin) solid var(--ink-3);
       background: var(--panel);
       cursor: pointer;
       transition:
@@ -75,7 +76,7 @@ abstract class HCheckControl extends LitElement {
     }
 
     .control:hover input:not(:disabled) {
-      border-color: var(--ink-3);
+      border-color: var(--ink-2);
     }
 
     input:focus-visible {

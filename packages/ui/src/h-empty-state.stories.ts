@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { expect, fn, userEvent } from 'storybook/test';
 import './h-button.ts';
 import './h-empty-state.ts';
+import './h-icon.ts';
 
 type EmptyStateArgs = {
   title: string;
@@ -61,7 +62,7 @@ const render = (args: EmptyStateArgs) => html`
     tone=${args.tone}
     @click=${args.onClick}
   >
-    <span slot="icon" aria-hidden="true">⌕</span>
+    <h-icon slot="icon" name="search"></h-icon>
     <h-button slot="action" variant="primary">Add market</h-button>
   </h-empty-state>
 `;
