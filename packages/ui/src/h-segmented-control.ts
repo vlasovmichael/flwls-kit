@@ -29,43 +29,82 @@ export class HSegmentedControl extends LitElement {
       display: block;
     }
 
+    /* Дорожка-пилюля, по которой ездит подложка выбранного пункта. */
     .group {
+      position: relative;
       display: inline-flex;
       gap: var(--space-1);
       padding: var(--space-1);
       border: var(--border-thin) solid var(--rule);
-      border-radius: var(--radius);
+      border-radius: var(--radius-pill);
       background: var(--panel-sunk);
     }
 
     :host([stretch]) .group {
       display: flex;
       width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Ездит трансформом, а не сменой left: transform считает композитор, переезд не дёргается. */
+    .thumb {
+      position: absolute;
+      top: var(--space-1);
+      bottom: var(--space-1);
+      left: 0;
+      width: var(--thumb-w, 0);
+      border-radius: var(--radius-pill);
+      background: var(--panel);
+      /* Обводка держит контур в тёмной теме, где тень на тёмном фоне не видна. */
+      box-shadow:
+        var(--shadow),
+        inset 0 0 0 var(--border-thin) var(--rule);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(var(--thumb-x, 0));
+    }
+
+    .thumb.is-ready {
+      opacity: 1;
+    }
+
+    .thumb.is-moving {
+      transition:
+        transform 340ms var(--spring),
+        width 340ms var(--spring),
+        opacity 200ms ease;
     }
 
     button {
+      position: relative;
       min-height: calc(var(--space-6) + var(--space-1));
       padding: var(--space-1) var(--space-3);
-      border: var(--border-thin) solid transparent;
-      border-radius: var(--radius-sm);
+      border: 0;
+      border-radius: var(--radius-pill);
       background: transparent;
       color: var(--ink-2);
       cursor: pointer;
       font: inherit;
       font-size: var(--text-small);
-      font-weight: 500;
+      font-weight: 600;
       line-height: 1;
+      white-space: nowrap;
+      transition: color 180ms ease;
     }
 
     :host([stretch]) button {
       flex: 1 1 0;
     }
 
+    button:hover:not(:disabled),
     button[aria-checked='true'] {
-      border-color: var(--rule-strong);
+      color: var(--ink);
+    }
+
+    /* Подложка ещё не измерена — выбор всё равно обязан читаться. */
+    .thumb:not(.is-ready) ~ button[aria-checked='true'] {
       background: var(--panel);
       box-shadow: var(--shadow);
-      color: var(--ink);
     }
 
     button:disabled {
@@ -73,9 +112,16 @@ export class HSegmentedControl extends LitElement {
       opacity: var(--opacity-disabled);
     }
 
+    /* Кольцо фокуса внутрь: снаружи оно вылезает за дорожку и читается как отдельная кнопка. */
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);
-      outline-offset: var(--space-1);
+      outline-offset: -2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .thumb.is-moving {
+        transition: none;
+      }
     }
 
     :host([size='sm']) button {
@@ -108,7 +154,40 @@ export class HSegmentedControl extends LitElement {
     this.stretch = false;
   }
 
+  #resize = new ResizeObserver(() => {
+    this.#placeThumb(false);
+  });
+
+  disconnectedCallback() {
+    this.#resize.disconnect();
+    super.disconnectedCallback();
+  }
+
+  protected firstUpdated() {
+    const group = this.renderRoot.querySelector('.group');
+    if (group) this.#resize.observe(group);
+  }
+
+  /** Подложка встаёт под выбранный пункт; первый раз — без анимации, потом — переездом. */
+  #placeThumb(animate: boolean) {
+    const thumb = this.renderRoot.querySelector<HTMLElement>('.thumb');
+    const button = this.#buttonFor(this.value);
+    if (!thumb) return;
+
+    if (!button) {
+      thumb.classList.remove('is-ready');
+      return;
+    }
+
+    thumb.classList.toggle('is-moving', animate && thumb.classList.contains('is-ready'));
+    thumb.style.setProperty('--thumb-x', `${String(button.offsetLeft)}px`);
+    thumb.style.setProperty('--thumb-w', `${String(button.offsetWidth)}px`);
+    thumb.classList.add('is-ready');
+  }
+
   protected updated(changed: Map<PropertyKey, unknown>) {
+    this.#placeThumb(true);
+
     if (!changed.has('options') && !changed.has('value')) {
       return;
     }
@@ -217,6 +296,7 @@ export class HSegmentedControl extends LitElement {
   render() {
     return html`
       <div class="group" role="radiogroup" aria-label=${this.label}>
+        <span class="thumb" aria-hidden="true"></span>
         ${this.options.map((option) => {
           const selected = option.value === this.value;
           const unavailable = this.disabled || Boolean(option.disabled);
