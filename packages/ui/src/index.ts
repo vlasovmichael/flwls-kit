@@ -75,3 +75,10 @@ export {
   type PageSlot,
   type PaginationSize,
 } from './h-pagination.js';
+export {
+  HDatePicker,
+  dayKey,
+  firstWeekday,
+  monthGrid,
+  parseDay,
+} from './h-date-picker.js';
