@@ -1,43 +1,86 @@
+/* Два слоя: палитра --color-* — сырые цвета, одинаковые в любой теме; семантика
+   (--ink, --gain…) ссылается на палитру и переключается темой. В стилях проектов —
+   только семантика: палитра нужна, чтобы тема меняла оттенок, не трогая смысл. */
 :root {
   color-scheme: light;
-  --ground: #f2f5f8;
-  --panel: #fff;
-  --panel-sunk: #e9eef3;
-  --sheen: rgb(255 255 255 / 90%);
-  --ink: #101720;
-  --ink-2: #4d5967;
-  --ink-3: #7c8794;
-  --rule: #dbe2ea;
-  --rule-soft: #e8edf3;
-  --accent: #2b5bd7;
-  --accent-2: #4f7ef0;
-  --accent-ink: #fff;
-  --wash: rgb(43 91 215 / 10%);
-  --data: #2f7d55;
-  --data-2: #4aa872;
-  --data-wash: rgb(47 125 85 / 12%);
-  --attn: #b8492a;
-  --attn-wash: rgb(184 73 42 / 12%);
+
+  /* Палитра */
+  --color-gray-0: #fff;
+  --color-gray-25: #f7f9fb;
+  --color-gray-50: #f2f5f8;
+  --color-gray-75: #e9eef3;
+  --color-gray-150: #dbe2ea;
+  --color-gray-200: #c3ccd6;
+  --color-gray-400: #97a3b2;
+  --color-gray-500: #808892;
+  --color-gray-575: #636c76;
+  --color-gray-600: #4d5967;
+  --color-gray-700: #333d4a;
+  --color-gray-750: #242c37;
+  --color-gray-800: #1a212b;
+  --color-gray-850: #141a22;
+  --color-gray-900: #101720;
+  --color-gray-925: #0e131a;
+  --color-gray-950: #080b10;
+  --color-blue-300: #8fb0f8;
+  --color-blue-400: #6d97f5;
+  --color-blue-500: #4f7ef0;
+  --color-blue-600: #2b5bd7;
+  --color-green-300: #8fd9aa;
+  --color-green-400: #5fbe86;
+  --color-green-500: #4aa872;
+  --color-green-600: #2f7d55;
+  --color-green-700: #1f7a4d;
+  --color-red-400: #f0705f;
+  --color-red-600: #c4372b;
+  --color-orange-400: #ee8a62;
+  --color-orange-600: #b8492a;
+  --color-amber-300: #ffd60a;
+  --color-amber-400: #e0a43a;
+  --color-amber-600: #c99700;
+  --color-amber-700: #a66a00;
+
+  /* Семантика: светлая тема */
+  --ground: var(--color-gray-50);
+  --panel: var(--color-gray-0);
+  --panel-raised: var(--color-gray-25);
+  --panel-sunk: var(--color-gray-75);
+  --sheen: color-mix(in srgb, var(--color-gray-0) 90%, transparent);
+  --ink: var(--color-gray-900);
+  --ink-2: var(--color-gray-600);
+  --ink-3: var(--color-gray-575);
+  --rule: var(--color-gray-150);
+  --rule-soft: var(--color-gray-75);
+  --rule-strong: var(--color-gray-200);
+  --accent: var(--color-blue-600);
+  --accent-2: var(--color-blue-500);
+  --accent-ink: var(--color-gray-0);
+  --wash: color-mix(in srgb, var(--color-blue-600) 10%, transparent);
+  --data: var(--color-green-600);
+  --data-2: var(--color-green-500);
+  --data-wash: color-mix(in srgb, var(--color-green-600) 12%, transparent);
+  --attn: var(--color-orange-600);
+  --attn-wash: color-mix(in srgb, var(--color-orange-600) 12%, transparent);
+  --gain: var(--color-green-700);
+  --gain-wash: color-mix(in srgb, var(--color-green-700) 12%, transparent);
+  --gain-line: color-mix(in srgb, var(--color-green-700) 40%, transparent);
+  --loss: var(--color-red-600);
+  --loss-wash: color-mix(in srgb, var(--color-red-600) 10%, transparent);
+  --loss-line: color-mix(in srgb, var(--color-red-600) 40%, transparent);
+  --caution: var(--color-amber-700);
+  --caution-wash: color-mix(in srgb, var(--color-amber-700) 12%, transparent);
+  --plot-grid: var(--color-gray-75);
+  --plot-price: var(--color-blue-600);
+  --plot-volume: var(--color-green-500);
+  --plot-ema: var(--color-amber-600);
   --shadow: 0 1px 2px rgb(16 23 32 / 4%), 0 12px 28px -20px rgb(16 23 32 / 45%);
   --shadow-lift: 0 2px 6px rgb(16 23 32 / 7%), 0 18px 36px -22px rgb(16 23 32 / 50%);
   --shadow-float: 0 2px 4px rgb(16 23 32 / 8%), 0 14px 32px -18px rgb(16 23 32 / 50%);
+
+  /* Шрифт */
   --display: "Geologica Variable", ui-sans-serif, system-ui, sans-serif;
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
-  --gap: clamp(2rem, 5vw, 3.25rem);
-  --radius: 14px;
-  --radius-sm: 9px;
-  --spring: cubic-bezier(0.22, 1.15, 0.36, 1);
-
-  /* Шкалы плотного интерфейса: имена не совпадают ни с одним проектом, чтобы не перебивать их. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
   --text-micro: 10px;
   --text-label: 11px;
   --text-small: 12px;
@@ -48,105 +91,119 @@
   --text-h2: 22px;
   --text-h1: 30px;
   --text-hero: 46px;
+  --tracking-tight: -0.02em;
+  --tracking-snug: -0.01em;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* Пространство и форма */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --gap: clamp(2rem, 5vw, 3.25rem);
+  --radius-sm: 9px;
+  --radius: 14px;
+  --radius-pill: 999px;
+  --border-thin: 1px;
+  --border-thick: 2px;
+  --opacity-muted: 0.7;
+  --opacity-disabled: 0.5;
+
+  /* Брейкпоинты: в @media переменные не читаются — это справка для JS и контейнеров. */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 720px;
+  --breakpoint-lg: 880px;
+
+  /* Слои и движение */
   --layer-sticky: 10;
   --layer-popover: 50;
   --layer-dialog: 70;
   --layer-toast: 90;
-
-  /* Деньги: прибыль, убыток и предупреждение не смешиваются с data/attn. */
-  --gain: #1f7a4d;
-  --gain-wash: rgb(31 122 77 / 12%);
-  --gain-line: rgb(31 122 77 / 40%);
-  --loss: #c4372b;
-  --loss-wash: rgb(196 55 43 / 10%);
-  --loss-line: rgb(196 55 43 / 40%);
-  --caution: #a66a00;
-  --caution-wash: rgb(166 106 0 / 12%);
-  --panel-raised: #f7f9fb;
-  --rule-strong: #c3ccd6;
-  --plot-grid: #e8edf3;
-  --plot-price: #2b5bd7;
-  --plot-volume: #4aa872;
-  --plot-ema: #c99700;
+  --spring: cubic-bezier(0.22, 1.15, 0.36, 1);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ground: #080b10;
-  --panel: #141a22;
-  --panel-sunk: #0e131a;
-  --sheen: rgb(255 255 255 / 5%);
-  --ink: #eaeef4;
-  --ink-2: #97a3b2;
-  --ink-3: #69737f;
-  --rule: #242c37;
-  --rule-soft: #1a212a;
-  --accent: #6d97f5;
-  --accent-2: #8fb0f8;
-  --accent-ink: #0a0e14;
-  --wash: rgb(109 151 245 / 16%);
-  --data: #5fbe86;
-  --data-2: #8fd9aa;
-  --data-wash: rgb(95 190 134 / 16%);
-  --attn: #ee8a62;
-  --attn-wash: rgb(238 138 98 / 15%);
+  --ground: var(--color-gray-950);
+  --panel: var(--color-gray-850);
+  --panel-raised: var(--color-gray-800);
+  --panel-sunk: var(--color-gray-925);
+  --sheen: color-mix(in srgb, var(--color-gray-0) 5%, transparent);
+  --ink: var(--color-gray-75);
+  --ink-2: var(--color-gray-400);
+  --ink-3: var(--color-gray-500);
+  --rule: var(--color-gray-750);
+  --rule-soft: var(--color-gray-800);
+  --rule-strong: var(--color-gray-700);
+  --accent: var(--color-blue-400);
+  --accent-2: var(--color-blue-300);
+  --accent-ink: var(--color-gray-950);
+  --wash: color-mix(in srgb, var(--color-blue-400) 16%, transparent);
+  --data: var(--color-green-400);
+  --data-2: var(--color-green-300);
+  --data-wash: color-mix(in srgb, var(--color-green-400) 16%, transparent);
+  --attn: var(--color-orange-400);
+  --attn-wash: color-mix(in srgb, var(--color-orange-400) 15%, transparent);
+  --gain: var(--color-green-400);
+  --gain-wash: color-mix(in srgb, var(--color-green-400) 16%, transparent);
+  --gain-line: color-mix(in srgb, var(--color-green-400) 40%, transparent);
+  --loss: var(--color-red-400);
+  --loss-wash: color-mix(in srgb, var(--color-red-400) 15%, transparent);
+  --loss-line: color-mix(in srgb, var(--color-red-400) 40%, transparent);
+  --caution: var(--color-amber-400);
+  --caution-wash: color-mix(in srgb, var(--color-amber-400) 15%, transparent);
+  --plot-grid: var(--color-gray-800);
+  --plot-price: var(--color-blue-400);
+  --plot-volume: var(--color-green-400);
+  --plot-ema: var(--color-amber-300);
   --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
   --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
   --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
-  --gain: #5fbe86;
-  --gain-wash: rgb(95 190 134 / 16%);
-  --gain-line: rgb(95 190 134 / 40%);
-  --loss: #f0705f;
-  --loss-wash: rgb(240 112 95 / 15%);
-  --loss-line: rgb(240 112 95 / 40%);
-  --caution: #e0a43a;
-  --caution-wash: rgb(224 164 58 / 15%);
-  --panel-raised: #1a212b;
-  --rule-strong: #333d4a;
-  --plot-grid: #1a212a;
-  --plot-price: #6d97f5;
-  --plot-volume: #5fbe86;
-  --plot-ema: #ffd60a;
 }
 
 /* Тема «как в системе»: тёмная, пока пользователь не выбрал светлую явно. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --ground: #080b10;
-    --panel: #141a22;
-    --panel-sunk: #0e131a;
-    --sheen: rgb(255 255 255 / 5%);
-    --ink: #eaeef4;
-    --ink-2: #97a3b2;
-    --ink-3: #69737f;
-    --rule: #242c37;
-    --rule-soft: #1a212a;
-    --accent: #6d97f5;
-    --accent-2: #8fb0f8;
-    --accent-ink: #0a0e14;
-    --wash: rgb(109 151 245 / 16%);
-    --data: #5fbe86;
-    --data-2: #8fd9aa;
-    --data-wash: rgb(95 190 134 / 16%);
-    --attn: #ee8a62;
-    --attn-wash: rgb(238 138 98 / 15%);
+    --ground: var(--color-gray-950);
+    --panel: var(--color-gray-850);
+    --panel-raised: var(--color-gray-800);
+    --panel-sunk: var(--color-gray-925);
+    --sheen: color-mix(in srgb, var(--color-gray-0) 5%, transparent);
+    --ink: var(--color-gray-75);
+    --ink-2: var(--color-gray-400);
+    --ink-3: var(--color-gray-500);
+    --rule: var(--color-gray-750);
+    --rule-soft: var(--color-gray-800);
+    --rule-strong: var(--color-gray-700);
+    --accent: var(--color-blue-400);
+    --accent-2: var(--color-blue-300);
+    --accent-ink: var(--color-gray-950);
+    --wash: color-mix(in srgb, var(--color-blue-400) 16%, transparent);
+    --data: var(--color-green-400);
+    --data-2: var(--color-green-300);
+    --data-wash: color-mix(in srgb, var(--color-green-400) 16%, transparent);
+    --attn: var(--color-orange-400);
+    --attn-wash: color-mix(in srgb, var(--color-orange-400) 15%, transparent);
+    --gain: var(--color-green-400);
+    --gain-wash: color-mix(in srgb, var(--color-green-400) 16%, transparent);
+    --gain-line: color-mix(in srgb, var(--color-green-400) 40%, transparent);
+    --loss: var(--color-red-400);
+    --loss-wash: color-mix(in srgb, var(--color-red-400) 15%, transparent);
+    --loss-line: color-mix(in srgb, var(--color-red-400) 40%, transparent);
+    --caution: var(--color-amber-400);
+    --caution-wash: color-mix(in srgb, var(--color-amber-400) 15%, transparent);
+    --plot-grid: var(--color-gray-800);
+    --plot-price: var(--color-blue-400);
+    --plot-volume: var(--color-green-400);
+    --plot-ema: var(--color-amber-300);
     --shadow: 0 1px 2px rgb(0 0 0 / 50%), 0 14px 30px -22px rgb(0 0 0 / 90%);
     --shadow-lift: 0 2px 8px rgb(0 0 0 / 60%), 0 22px 44px -24px #000;
     --shadow-float: 0 2px 6px rgb(0 0 0 / 70%), 0 14px 32px -18px rgb(0 0 0 / 100%);
-    --gain: #5fbe86;
-    --gain-wash: rgb(95 190 134 / 16%);
-    --gain-line: rgb(95 190 134 / 40%);
-    --loss: #f0705f;
-    --loss-wash: rgb(240 112 95 / 15%);
-    --loss-line: rgb(240 112 95 / 40%);
-    --caution: #e0a43a;
-    --caution-wash: rgb(224 164 58 / 15%);
-    --panel-raised: #1a212b;
-    --rule-strong: #333d4a;
-    --plot-grid: #1a212a;
-    --plot-price: #6d97f5;
-    --plot-volume: #5fbe86;
-    --plot-ema: #ffd60a;
   }
 }

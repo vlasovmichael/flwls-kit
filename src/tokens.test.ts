@@ -33,3 +33,18 @@ describe('tokens.css', () => {
     }
   });
 });
+
+describe('два слоя', () => {
+  const raw = /#[\da-f]{3,8}\b|rgb\(/i;
+
+  test('семантика ссылается на палитру, сырых цветов в ней нет (кроме теней)', () => {
+    const offenders = [light, dark, system].flatMap((block) =>
+      [...block].filter(([name, value]) =>
+        !name.startsWith('--color-') && !name.startsWith('--shadow') && raw.test(value)).map(([n]) => n));
+    expect(offenders).toEqual([]);
+  });
+
+  test('палитра одна на все темы: тёмная тема её не переопределяет', () => {
+    expect([...dark.keys()].filter((name) => name.startsWith('--color-'))).toEqual([]);
+  });
+});

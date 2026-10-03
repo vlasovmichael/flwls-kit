@@ -1,38 +1,43 @@
+import { html } from 'lit';
 import './h-stat.ts';
 
+type Args = { label: string; value: string; note: string; tone: '' | 'data' | 'attn' };
+
 export default {
-  title: 'Компоненты/Показание',
+  title: 'Components/Display/Stat',
+  component: 'h-stat',
+  args: { label: 'Steps', value: '7,000', note: 'today', tone: '' },
+  argTypes: {
+    label: { control: 'text', description: 'Caption above the number' },
+    value: { control: 'text', description: 'The number, already formatted' },
+    note: { control: 'text', description: 'Context under the number: period, comparison' },
+    tone: { control: 'inline-radio', options: ['', 'data', 'attn'], description: 'Colors the number: good or needs attention' },
+  },
   parameters: {
     docs: {
       description: {
-        component: `Одно число с подписью: эквити, шаги, давление. Крупная цифра на \`--display\`,
-подпись над ней, пояснение под ней.
+        component: `One number with a caption: equity, steps, blood pressure. Big figure in \`--display\`,
+caption above, context below.
 
-**Когда:** ключевая величина экрана или ряд из 2–4 показателей.
-**Когда нет:** таблица чисел — для неё \`<table>\` с \`--mono\`.
-
-| Свойство | Тип | Что делает |
-| --- | --- | --- |
-| \`label\` | строка | Подпись над числом |
-| \`value\` | строка | Само число, уже отформатированное |
-| \`note\` | строка | Пояснение под числом: период, сравнение |
-| \`tone\` | \`data\` \\| \`attn\` | Красит число: хорошо или требует внимания |`,
+**Use** for the key value of a screen, or a row of 2–4 metrics.
+**Don't use** for a table of numbers — use a \`<table>\` with \`--mono\`.`,
       },
     },
   },
 };
 
-const stat = (label: string, value: string, note: string, tone?: string) => {
-  const el = document.createElement('h-stat');
-  el.setAttribute('label', label);
-  el.setAttribute('value', value);
-  el.setAttribute('note', note);
-  if (tone) el.setAttribute('tone', tone);
-  return el;
+export const Playground = {
+  render: (a: Args) => html`<h-stat label=${a.label} value=${a.value} note=${a.note} tone=${a.tone}></h-stat>`,
 };
 
-export const Обычное = () => stat('Шаги', '7 000', 'за сегодня');
+export const Good = { args: { label: 'Equity', value: '$105.09', note: '+0.4% today', tone: 'data' }, render: Playground.render };
 
-export const Хорошо = () => stat('Эквити', '$105.09', 'за сутки +0.4%', 'data');
+export const Attention = { args: { label: 'Blood pressure', value: '164/96', note: 'above normal', tone: 'attn' }, render: Playground.render };
 
-export const Внимание = () => stat('Давление', '164/96', 'выше нормы', 'attn');
+export const Row = {
+  render: () => html`<div class="demo-row">
+    <h-stat label="Equity" value="$105.09" note="+0.4% today" tone="data"></h-stat>
+    <h-stat label="Open positions" value="0" note="flat"></h-stat>
+    <h-stat label="Drawdown" value="−3.1%" note="of 8% limit" tone="attn"></h-stat>
+  </div>`,
+};
