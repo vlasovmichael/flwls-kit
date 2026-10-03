@@ -1,6 +1,7 @@
 import '../packages/ui/src/tokens.css';
 import './preview.css';
 import './docs/ds-tokens.ts';
+import { ThemedDocs } from './docs/themed-docs.ts';
 
 // Тема кита ставится атрибутом на <html>, как в проектах: «System» снимает его.
 const applyTheme = (theme: string) => {
@@ -39,6 +40,7 @@ export const tags = ['autodocs'];
 export const parameters = {
   a11y: { test: 'error' },
   backgrounds: { disable: true },
+  docs: { container: ThemedDocs },
   controls: { expanded: true, sort: 'requiredFirst' },
   options: {
     storySort: {

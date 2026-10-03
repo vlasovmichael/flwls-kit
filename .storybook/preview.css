@@ -21,8 +21,9 @@ body,
   font-family: var(--display);
   color: var(--ink) !important;
 }
-.sbdocs-content :where(p, li, td, th, span) {
-  color: var(--ink-2);
+/* Storybook красит текст своими классами той же специфичности и подключается позже. */
+.sbdocs-content :is(p, li, td, th) {
+  color: var(--ink-2) !important;
 }
 .sbdocs-content code {
   background: var(--panel-sunk) !important;
@@ -97,3 +98,4 @@ body,
   gap: var(--space-3);
   margin-top: var(--space-5);
 }
+
