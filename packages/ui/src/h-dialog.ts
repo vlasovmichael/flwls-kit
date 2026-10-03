@@ -38,7 +38,7 @@ export class HDialog extends LitElement {
       align-items: center;
       justify-content: center;
       padding: var(--space-5);
-      background: color-mix(in srgb, var(--ink) 45%, transparent);
+      background: var(--scrim);
     }
     section {
       position: relative;

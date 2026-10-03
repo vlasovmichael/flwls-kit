@@ -82,3 +82,10 @@ body,
   color: var(--ink);
   font: var(--text-base) var(--sans);
 }
+
+/* Колонка контролов внутри панели или формы. */
+.demo-stack {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
