@@ -108,7 +108,7 @@ export const COLOR: Group[] = [
 export const FONT: Token[] = [
   { name: '--display', use: 'Headings and hero numbers — Geologica' },
   { name: '--sans', use: 'Interface text — IBM Plex Sans' },
-  { name: '--mono', use: 'Numbers in columns and code — IBM Plex Mono' },
+  { name: '--mono', use: 'Numbers in columns and code — JetBrains Mono' },
 ];
 
 export const TEXT: Token[] = [
