@@ -32,3 +32,4 @@ export {
   type TabsOrientation,
   type TabsVariant,
 } from './h-tabs.js';
+export { HDisclosure } from './h-disclosure.js';
