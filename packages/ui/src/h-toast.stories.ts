@@ -74,7 +74,9 @@ const render = (args: Args) => html`
   ></h-toast>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const canvas = within(canvasElement);
@@ -86,6 +88,10 @@ export const Playground = {
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(args.onDismiss).toHaveBeenCalled());
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Info = {

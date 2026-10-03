@@ -68,7 +68,9 @@ const render = (args: ProgressArgs) => html`
   ></h-progress>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const progress = canvasElement.querySelector('h-progress') as HProgressElement;
@@ -80,6 +82,10 @@ export const Playground = {
     await expect(track).toHaveAttribute('aria-valuemin', '0');
     await expect(track).toHaveAttribute('aria-valuemax', '100');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Determinate = {

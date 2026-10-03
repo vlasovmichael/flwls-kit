@@ -58,7 +58,9 @@ const render = (args: DisclosureArgs) => html`
   </h-disclosure>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({
     canvasElement,
@@ -81,6 +83,10 @@ export const Playground = {
     await expect(button).toHaveAttribute('aria-expanded', 'true');
     await expect(args.onChange).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Closed = {

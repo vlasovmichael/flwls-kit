@@ -72,7 +72,9 @@ const opener = (a: Args) => html`
   >
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render: opener,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const canvas = within(canvasElement);
@@ -86,8 +88,13 @@ export const Playground = {
   },
 };
 
-export const EscapeCancels = {
-  name: 'Escape cancels',
+export const Playground = {
+  render: PlaygroundTest.render,
+};
+
+export const EscapeCancelsTest = {
+  name: 'Test: Escape Cancels',
+  tags: ['!dev', '!autodocs'],
   render: opener,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Open dialog' }));
@@ -98,8 +105,9 @@ export const EscapeCancels = {
   },
 };
 
-export const FocusTrap = {
-  name: 'Focus stays inside',
+export const FocusTrapTest = {
+  name: 'Test: Focus Trap',
+  tags: ['!dev', '!autodocs'],
   render: opener,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Open dialog' }));
@@ -114,6 +122,8 @@ export const FocusTrap = {
     await expect(root.activeElement).toBe(first);
     await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
     await expect(root.activeElement).toBe(last);
+    // Проверку контраста запускаем на проявившемся окне, а не посреди анимации входа.
+    await Promise.all(root.getAnimations().map((a) => a.finished));
   },
 };
 

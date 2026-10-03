@@ -45,12 +45,18 @@ const renderBadge = (args: BadgeArgs) => html`
   <h-badge tone=${args.tone} size=${args.size}>Active</h-badge>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render: renderBadge,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const badge = canvasElement.querySelector('h-badge');
     await expect(badge).toHaveTextContent('Active');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Neutral = {

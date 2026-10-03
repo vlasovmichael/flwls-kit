@@ -52,7 +52,9 @@ const render = (args: Args) => html`
   ></h-toast-stack>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
@@ -64,6 +66,10 @@ export const Playground = {
     await userEvent.click(close);
     await waitFor(() => expect(stack.shadowRoot?.querySelector('h-toast')).toBeNull());
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const TopStart = {

@@ -67,7 +67,9 @@ const render = (args: AlertArgs) => html`
   </h-alert>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: AlertArgs }) => {
     const alert = canvasElement.querySelector('h-alert') as HAlertElement;
@@ -80,6 +82,10 @@ export const Playground = {
     await expect(alert).toHaveAttribute('hidden');
     await expect(args.onDismiss).toHaveBeenCalledTimes(1);
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Info = {

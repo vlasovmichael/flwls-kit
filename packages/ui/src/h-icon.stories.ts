@@ -52,12 +52,18 @@ const renderIcon = (args: IconArgs) => html`
   <h-icon name=${args.name} size=${args.size} label=${args.label}></h-icon>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render: renderIcon,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const icon = canvasElement.querySelector('h-icon');
     await expect(icon?.shadowRoot?.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const CheckIcon = {

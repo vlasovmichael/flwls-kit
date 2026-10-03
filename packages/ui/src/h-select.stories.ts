@@ -69,8 +69,9 @@ export const Playground = {
   ></h-select>`,
 };
 
-export const KeyboardSelect = {
-  name: 'Keyboard',
+export const KeyboardSelectTest = {
+  name: 'Test: Keyboard Select',
+  tags: ['!dev', '!autodocs'],
   render: Playground.render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const select = canvasElement.querySelector('h-select') as HSelect;

@@ -45,7 +45,9 @@ const renderCard = (args: CardArgs) => html`
   </h-card>
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render: renderCard,
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const card = canvasElement.querySelector('h-card') as HCardElement;
@@ -55,6 +57,10 @@ export const Playground = {
     await expect(card.shadowRoot.querySelector('footer')).not.toBeNull();
     await expect(card.shadowRoot.querySelector('slot[name="actions"]')).not.toBeNull();
   },
+};
+
+export const Playground = {
+  render: PlaygroundTest.render,
 };
 
 export const Surface = {
