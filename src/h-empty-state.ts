@@ -1,3 +1,4 @@
+import './h-icon.js';
 import { LitElement, css, html } from 'lit';
 
 export type EmptyStateTone = 'neutral' | 'info' | 'success' | 'warning' | 'error';
@@ -129,7 +130,9 @@ export class HEmptyState extends LitElement {
   render() {
     return html`
       <section aria-labelledby="title">
-        <div class="icon" aria-hidden="true"><slot name="icon">—</slot></div>
+        <div class="icon" aria-hidden="true">
+          <slot name="icon"><h-icon name="inbox"></h-icon></slot>
+        </div>
         <h2 id="title">${this.title}</h2>
         ${this.description ? html`<p>${this.description}</p>` : null}
         <div class="actions" ?hidden=${!this.#hasAction}>

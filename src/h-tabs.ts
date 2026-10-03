@@ -10,6 +10,8 @@ type TabState = {
   controls?: string;
   selected: boolean;
   tabIndex: number;
+  variant: string;
+  orientation: string;
 };
 
 type PanelState = {
@@ -44,20 +46,39 @@ export class HTab extends LitElement {
       user-select: none;
     }
 
-    :host([aria-selected='true']) {
-      color: var(--accent);
-    }
-
-    :host-context(h-tabs[variant='wrap'])[aria-selected='true'] {
-      border-bottom-color: var(--accent);
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    :host-context(h-tabs[variant='contained'])[aria-selected='true'] {
-      background: var(--panel);
+    :host(:hover) {
       color: var(--ink);
-      box-shadow: var(--shadow);
+    }
+
+    :host([aria-selected='true']) {
+      color: var(--ink);
+    }
+
+    /* contained: выбранная вкладка — подложка на дорожке, как у SegmentedControl. */
+    :host([data-variant='contained']) {
+      border-radius: var(--radius-pill);
+    }
+
+    :host([data-variant='contained'][aria-selected='true']) {
+      background: var(--panel);
+      box-shadow:
+        var(--shadow),
+        inset 0 0 0 var(--border-thin) var(--rule);
+    }
+
+    :host([data-variant='contained'][data-orientation='vertical']) {
+      border-radius: var(--radius-sm);
+    }
+
+    /* wrap: подчёркивание акцентом поверх линии списка. */
+    :host([data-variant='wrap']) {
+      margin-bottom: calc(-1 * var(--border-thin));
+      border-width: 0 0 var(--border-thick);
+      border-radius: 0;
+    }
+
+    :host([data-variant='wrap'][aria-selected='true']) {
+      border-bottom-color: var(--accent);
     }
 
     :host([aria-disabled='true']) {
@@ -67,7 +88,7 @@ export class HTab extends LitElement {
 
     :host(:focus-visible) {
       outline: var(--border-thick) solid var(--accent);
-      outline-offset: var(--space-1);
+      outline-offset: -2px;
     }
   `;
 
@@ -96,6 +117,9 @@ export class HTab extends LitElement {
 
     this.setAttribute('aria-selected', String(state.selected));
     this.setAttribute('aria-disabled', String(this.disabled));
+    // Вид задаёт родитель атрибутом: :host-context() не работает в Firefox и Safari.
+    this.dataset.variant = state.variant;
+    this.dataset.orientation = state.orientation;
     this.tabIndex = state.tabIndex;
     this.requestUpdate();
   }
@@ -184,7 +208,7 @@ export class HTabs extends LitElement {
 
     :host([orientation='vertical']) .tablist {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
     :host([variant='wrap']) .tablist {
@@ -196,12 +220,34 @@ export class HTabs extends LitElement {
       width: fit-content;
       padding: var(--space-1);
       border: var(--border-thin) solid var(--rule);
-      border-radius: var(--radius);
+      border-radius: var(--radius-pill);
       background: var(--panel-sunk);
+    }
+
+    /* Высокая дорожка с радиусом-пилюлей превращается в овал. */
+    :host([variant='contained'][orientation='vertical']) .tablist {
+      border-radius: calc(var(--radius-sm) + var(--space-1));
     }
 
     .panels {
       padding-top: var(--space-3);
+    }
+
+    /* Вертикальный список стоит слева от панели, а не над ней. */
+    :host([orientation='vertical']) {
+      display: flex;
+      gap: var(--space-4);
+      align-items: flex-start;
+    }
+
+    :host([orientation='vertical']) .tablist {
+      flex: none;
+    }
+
+    :host([orientation='vertical']) .panels {
+      flex: 1;
+      min-width: 0;
+      padding-top: 0;
     }
   `;
 
@@ -321,6 +367,8 @@ export class HTabs extends LitElement {
         controls: panel ? this.#panelId(panel, panels.indexOf(panel)) : undefined,
         selected: tab === selected,
         tabIndex: tab === focused ? 0 : -1,
+        variant: this.variant,
+        orientation: this.orientation,
       });
     });
 

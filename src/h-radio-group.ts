@@ -51,7 +51,8 @@ export class HRadioGroup extends LitElement {
     }
 
     button {
-      display: flex;
+      display: inline-flex;
+      width: fit-content;
       align-items: center;
       gap: var(--space-2);
       padding: 0;
@@ -69,15 +70,24 @@ export class HRadioGroup extends LitElement {
       flex: 0 0 auto;
       width: var(--space-5);
       height: var(--space-5);
-      border: var(--border-thin) solid var(--rule-strong);
+      /* Граница контрола — не тоньше 3:1 к фону (WCAG 1.4.11), поэтому --ink-3, а не --rule. */
+      border: var(--border-thin) solid var(--ink-3);
       border-radius: var(--radius-pill);
       background: var(--panel);
+      transition:
+        border-color 140ms ease,
+        box-shadow 180ms var(--spring);
     }
 
+    button:hover:not(:disabled) .indicator {
+      border-color: var(--ink-2);
+    }
+
+    /* Выбранный: акцентное кольцо нарастает к центру и оставляет точку цвета --accent-ink. */
     button[aria-checked='true'] .indicator {
-      border: var(--border-thick) solid var(--accent);
-      background: var(--panel);
-      box-shadow: inset 0 0 0 var(--space-1) var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-ink);
+      box-shadow: inset 0 0 0 calc(var(--space-1) + 1px) var(--accent);
     }
 
     button:disabled {
@@ -85,9 +95,20 @@ export class HRadioGroup extends LitElement {
       opacity: var(--opacity-disabled);
     }
 
+    /* Кольцо фокуса вокруг кружка, а не прямоугольником на весь ряд. */
     button:focus-visible {
+      outline: none;
+    }
+
+    button:focus-visible .indicator {
       outline: var(--border-thick) solid var(--accent);
-      outline-offset: var(--space-1);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .indicator {
+        transition: none;
+      }
     }
 
     .description,

@@ -70,3 +70,15 @@ test('textarea использует нативный многострочный 
   expect(field.value).toBe('Line one\nLine two');
   field.remove();
 });
+
+test('пустая ошибка не красит рамку: aria-invalid только при тексте', async () => {
+  const field = document.createElement('h-field') as HField;
+  field.setAttribute('error', '');
+  document.body.append(field);
+  await field.updateComplete;
+  expect(field.shadowRoot?.querySelector('input')?.getAttribute('aria-invalid')).toBe('false');
+  field.error = 'Required';
+  await field.updateComplete;
+  expect(field.shadowRoot?.querySelector('input')?.getAttribute('aria-invalid')).toBe('true');
+  field.remove();
+});

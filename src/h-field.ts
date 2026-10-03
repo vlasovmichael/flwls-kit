@@ -56,7 +56,9 @@ export class HField extends LitElement {
       outline-offset: var(--space-1);
     }
 
-    :host([error]) .control {
+    /* Красная рамка — от aria-invalid, а не от атрибута error: error="" тоже атрибут. */
+    .control:has([aria-invalid='true']),
+    textarea[aria-invalid='true'] {
       border-color: var(--loss);
     }
 

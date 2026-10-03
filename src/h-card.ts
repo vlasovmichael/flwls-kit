@@ -33,6 +33,23 @@ export class HCard extends LitElement {
       box-shadow: none;
     }
 
+    /* Заголовок в шапке — из токенов; поля браузера у h2/p не должны раздувать карточку. */
+    ::slotted([slot='header']) {
+      margin: 0;
+      font-family: var(--display);
+      font-size: var(--text-lead);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .content ::slotted(:first-child) {
+      margin-top: 0;
+    }
+
+    .content ::slotted(:last-child) {
+      margin-bottom: 0;
+    }
+
     header {
       padding: var(--space-4);
       border-bottom: var(--border-thin) solid var(--rule-soft);
