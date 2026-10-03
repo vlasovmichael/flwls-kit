@@ -10,6 +10,8 @@ export class HDialog extends LitElement {
     open: { type: Boolean, reflect: true },
     title: { type: String },
     danger: { type: Boolean, reflect: true },
+    confirmLabel: { type: String, attribute: 'confirm-label' },
+    cancelLabel: { type: String, attribute: 'cancel-label' },
   };
 
   static styles = css`
@@ -22,19 +24,19 @@ export class HDialog extends LitElement {
     .backdrop {
       position: fixed;
       inset: 0;
-      z-index: 60;
+      z-index: var(--layer-dialog);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.25rem;
+      padding: var(--space-5);
       background: color-mix(in srgb, var(--ink) 45%, transparent);
     }
     section {
       position: relative;
       width: min(24rem, 100%);
-      padding: 1.25rem;
-      border: 1px solid var(--rule);
-      border-radius: 16px;
+      padding: var(--space-5);
+      border: var(--border-thin) solid var(--rule);
+      border-radius: var(--radius);
       background: var(--panel);
       box-shadow: var(--shadow-float);
       color: var(--ink);
@@ -43,8 +45,8 @@ export class HDialog extends LitElement {
     header {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      margin-bottom: 0.65rem;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
     }
     .glyph {
       display: flex;
@@ -68,22 +70,27 @@ export class HDialog extends LitElement {
     }
     h2 {
       margin: 0;
-      font-size: 1.0625rem;
+      font-family: var(--display);
+      font-size: var(--text-lead);
       line-height: 1.3;
     }
     button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      border: 1px solid var(--rule);
-      border-radius: 999px;
+      gap: var(--space-2);
+      border: var(--border-thin) solid var(--rule);
+      border-radius: var(--radius-pill);
       background: var(--panel);
       color: var(--ink-2);
       cursor: pointer;
       font: inherit;
-      font-size: 0.875rem;
-      padding: 0.45rem 0.9rem;
+      font-size: var(--text-base);
+      padding: var(--space-2) var(--space-4);
+    }
+    button:focus-visible {
+      outline: var(--border-thick) solid var(--accent);
+      outline-offset: 2px;
     }
     .close {
       margin-left: auto;
@@ -97,16 +104,20 @@ export class HDialog extends LitElement {
       width: 0.95rem;
       height: 0.95rem;
     }
-    ::slotted(p),
-    .text {
-      margin: 0 0 1.1rem;
+    /* Отступ до кнопок держит разметка компонента: текст в слоте бывает голой строкой. */
+    .body {
+      margin-bottom: var(--space-5);
       color: var(--ink-2);
+      font-size: var(--text-base);
       line-height: 1.55;
+    }
+    ::slotted(p) {
+      margin: 0;
     }
     footer {
       display: flex;
       justify-content: flex-end;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
     .confirm {
       font-weight: 500;
@@ -132,6 +143,8 @@ export class HDialog extends LitElement {
   declare open: boolean;
   declare title: string;
   declare danger: boolean;
+  declare confirmLabel: string;
+  declare cancelLabel: string;
 
   #opener: HTMLElement | null = null;
   #leaving = false;
@@ -141,6 +154,8 @@ export class HDialog extends LitElement {
     this.open = false;
     this.title = '';
     this.danger = false;
+    this.confirmLabel = 'Confirm';
+    this.cancelLabel = 'Cancel';
   }
 
   #escape = (event: KeyboardEvent) => {
@@ -223,7 +238,7 @@ export class HDialog extends LitElement {
     >
       <section role="dialog" aria-modal="true" aria-label=${this.title}>
         <header>
-          <span class="glyph">${icon(GLYPHS.warn)}</span>
+          ${this.danger ? html`<span class="glyph">${icon(GLYPHS.warn)}</span>` : ''}
           <h2>${this.title}</h2>
           <button
             type="button"
@@ -236,7 +251,7 @@ export class HDialog extends LitElement {
             ${icon(GLYPHS.close)}
           </button>
         </header>
-        <slot></slot>
+        <div class="body"><slot></slot></div>
         <footer>
           <button
             type="button"
@@ -245,7 +260,7 @@ export class HDialog extends LitElement {
               this.close("cancel");
             }}
           >
-            <slot name="cancel">Отмена</slot>
+            <slot name="cancel">${this.cancelLabel}</slot>
           </button>
           <button
             type="button"
@@ -254,9 +269,8 @@ export class HDialog extends LitElement {
               this.close("confirm");
             }}
           >
-            ${this.danger ? icon(GLYPHS.trash) : icon(GLYPHS.check)}<slot
-              name="confirm"
-              >Подтвердить</slot
+            ${this.danger ? icon(GLYPHS.trash) : icon(GLYPHS.check)}<slot name="confirm"
+              >${this.confirmLabel}</slot
             >
           </button>
         </footer>
