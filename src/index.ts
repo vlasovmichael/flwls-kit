@@ -82,3 +82,7 @@ export {
   monthGrid,
   parseDay,
 } from './h-date-picker.js';
+export { HDivider, type DividerOrientation } from './h-divider.js';
+export { HKbd } from './h-kbd.js';
+export { HCopyButton } from './h-copy-button.js';
+export { HSearch } from './h-search.js';
