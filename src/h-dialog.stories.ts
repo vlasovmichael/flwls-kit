@@ -98,6 +98,25 @@ export const EscapeCancels = {
   },
 };
 
+export const FocusTrap = {
+  name: 'Focus stays inside',
+  render: opener,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Open dialog' }));
+    const dialog = canvasElement.querySelector('h-dialog') as HDialog;
+    await waitFor(() => expect(dialog.open).toBe(true));
+    const root = dialog.shadowRoot as ShadowRoot;
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('section button')];
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    last.focus();
+    await userEvent.keyboard('{Tab}');
+    await expect(root.activeElement).toBe(first);
+    await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+    await expect(root.activeElement).toBe(last);
+  },
+};
+
 export const Destructive = {
   args: { title: 'Delete entry?', text: 'This cannot be undone.', danger: true, confirmLabel: 'Delete' },
   render: opener,
