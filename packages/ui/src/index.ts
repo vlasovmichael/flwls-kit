@@ -9,3 +9,8 @@ export {
 export { HSelect, type SelectOption } from './h-select.js';
 export { HButton, HIconButton } from './h-button.js';
 export { HField, HTextarea, type FieldSize } from './h-field.js';
+export {
+  HSegmentedControl,
+  type SegmentedControlOption,
+  type SegmentedControlSize,
+} from './h-segmented-control.js';
