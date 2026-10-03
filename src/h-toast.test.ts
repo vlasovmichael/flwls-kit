@@ -1,20 +1,50 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { HToast } from './h-toast.ts';
 
-test('уведомление сообщает о закрытии', async () => {
-  const toast = document.createElement('h-toast') as HToast;
-  toast.message = 'Запись сохранена';
+async function appendToast(toast: HToast) {
   document.body.append(toast);
   await toast.updateComplete;
+}
 
-  const dismissed = new Promise<void>((resolve) => {
-    toast.addEventListener('dismiss', () => {
-      resolve();
-    });
-  });
-  (toast.shadowRoot?.querySelector('.toast') as HTMLElement).click();
-  await dismissed;
+test.each(['info', 'success', 'warning', 'error', 'ok', 'bad'] as const)(
+  'уведомление отражает тон %s',
+  async (tone) => {
+    const toast = new HToast();
+    toast.tone = tone;
+    await appendToast(toast);
+    expect(toast.getAttribute('tone')).toBe(tone);
+    toast.remove();
+  },
+);
 
-  expect(toast.open).toBe(false);
+test('кнопка закрытия сообщает причину и доступна с клавиатуры', async () => {
+  const toast = new HToast();
+  toast.open = true;
+  toast.duration = 0;
+  const dismissed = vi.fn();
+  toast.addEventListener('dismiss', dismissed);
+  await appendToast(toast);
+  const close = toast.shadowRoot?.querySelector('.close') as HTMLButtonElement;
+  close.click();
+  expect(close.getAttribute('aria-label')).toBe('Close notification');
+  expect(dismissed).toHaveBeenCalledWith(
+    expect.objectContaining({ detail: { reason: 'close' } }),
+  );
   toast.remove();
+});
+
+test('таймер закрывает открытое уведомление', async () => {
+  vi.useFakeTimers();
+  const toast = new HToast();
+  toast.open = true;
+  toast.duration = 100;
+  const dismissed = vi.fn();
+  toast.addEventListener('dismiss', dismissed);
+  await appendToast(toast);
+  await vi.advanceTimersByTimeAsync(100);
+  expect(dismissed).toHaveBeenCalledWith(
+    expect.objectContaining({ detail: { reason: 'timeout' } }),
+  );
+  toast.remove();
+  vi.useRealTimers();
 });
