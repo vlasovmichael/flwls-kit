@@ -5,33 +5,58 @@ export type SelectOption = { label: string; value: string };
 /** Левая граница ближайшего предка, который обрезает содержимое по горизонтали. */
 function clipLeft(node: HTMLElement) {
   for (let parent = node.parentElement; parent; parent = parent.parentElement) {
-    if (getComputedStyle(parent).overflowX !== 'visible') return parent.getBoundingClientRect().left;
+    if (getComputedStyle(parent).overflowX !== 'visible') {
+      return parent.getBoundingClientRect().left;
+    }
   }
+
   return 0;
 }
 
+/** Селект использует light DOM, чтобы проекты могли оформлять список в своих слоях. */
 export class HSelect extends LitElement {
+  static formAssociated = true;
+
   static properties = {
     options: { attribute: false },
     value: { type: String },
     label: { type: String },
+    name: { type: String },
+    placeholder: { type: String },
+    disabled: { type: Boolean, reflect: true },
   };
 
   declare options: SelectOption[];
   declare value: string;
   declare label: string;
+  declare name: string;
+  declare placeholder: string;
+  declare disabled: boolean;
+
+  #active = 0;
+
+  #internals: ElementInternals | null = null;
 
   #open = false;
-  #active = 0;
+
   #typed = '';
+
   #typedAt = 0;
-  #uid = `sel${Math.random().toString(36).slice(2, 8)}`;
+
+  #uid = `select-${Math.random().toString(36).slice(2, 8)}`;
 
   constructor() {
     super();
     this.options = [];
     this.value = '';
     this.label = '';
+    this.name = '';
+    this.placeholder = 'Select an option';
+    this.disabled = false;
+
+    if ('attachInternals' in this) {
+      this.#internals = this.attachInternals();
+    }
   }
 
   protected createRenderRoot() {
@@ -51,27 +76,56 @@ export class HSelect extends LitElement {
   }
 
   updated(changed: Map<PropertyKey, unknown>) {
+    this.#internals?.setFormValue(this.disabled ? null : this.value);
+
     if (changed.has('options') || changed.has('value')) {
       this.#active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
     }
   }
 
+  /** Форма выключает контрол через platform callback. */
+  formDisabledCallback(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
   #setOpen(next: boolean) {
+    if (this.disabled) {
+      return;
+    }
+
     this.#open = next;
     this.dataset.open = String(next);
-    if (next) this.#active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
+
+    if (next) {
+      this.#active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
+    }
+
     this.requestUpdate();
-    if (next) void this.#place();
+
+    if (next) {
+      void this.#place();
+    }
   }
 
   /** У края экрана или контейнера список разворачивается туда, где есть место. */
   async #place() {
     await this.updateComplete;
     const list = this.querySelector<HTMLElement>('.select-list');
-    if (!list) return;
+
+    if (!list) {
+      return;
+    }
+
     this.classList.remove('is-up', 'is-start');
-    if (window.innerHeight - list.getBoundingClientRect().bottom < 8) this.classList.add('is-up');
-    if (list.getBoundingClientRect().left < clipLeft(this) + 8) this.classList.add('is-start');
+
+    if (window.innerHeight - list.getBoundingClientRect().bottom < 8) {
+      this.classList.add('is-up');
+    }
+
+    if (list.getBoundingClientRect().left < clipLeft(this) + 8) {
+      this.classList.add('is-start');
+    }
+
     this.#showActive();
   }
 
@@ -81,14 +135,33 @@ export class HSelect extends LitElement {
 
   #choose(index: number) {
     const option = this.options[index];
+
     this.#setOpen(false);
-    if (option.value === this.value) return;
+
+    if (option.value === this.value) {
+      return;
+    }
+
     this.value = option.value;
-    this.dispatchEvent(new CustomEvent<string>('change', { bubbles: true, composed: true, detail: this.value }));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        composed: true,
+        detail: { value: option.value, option },
+      }),
+    );
   }
 
   #move(step: number) {
-    if (!this.#open) { this.#setOpen(true); return; }
+    if (!this.#open) {
+      this.#setOpen(true);
+      return;
+    }
+
+    if (this.options.length === 0) {
+      return;
+    }
+
     this.#active = (this.#active + step + this.options.length) % this.options.length;
     this.requestUpdate();
     void this.updateComplete.then(() => {
@@ -97,44 +170,129 @@ export class HSelect extends LitElement {
   }
 
   #outside = (event: PointerEvent) => {
-    if (this.#open && !this.contains(event.target as Node)) this.#setOpen(false);
+    if (this.#open && !this.contains(event.target as Node)) {
+      this.#setOpen(false);
+    }
   };
 
   #keyDown = (event: KeyboardEvent) => {
+    if (this.disabled) {
+      return;
+    }
+
     switch (event.key) {
-      case 'ArrowDown': event.preventDefault(); { this.#move(1); return; }
-      case 'ArrowUp': event.preventDefault(); { this.#move(-1); return; }
-      case 'Home': event.preventDefault(); this.#active = 0; { this.requestUpdate(); return; }
-      case 'End': event.preventDefault(); this.#active = this.options.length - 1; { this.requestUpdate(); return; }
+      case 'ArrowDown':
+        event.preventDefault();
+        this.#move(1);
+        return;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.#move(-1);
+        return;
+      case 'Home':
+        event.preventDefault();
+        this.#active = 0;
+        this.requestUpdate();
+        return;
+      case 'End':
+        event.preventDefault();
+        this.#active = this.options.length - 1;
+        this.requestUpdate();
+        return;
       case 'Enter':
       case ' ':
         event.preventDefault();
-        if (this.#open) this.#choose(this.#active);
-        else this.#setOpen(true);
+        if (this.#open) {
+          this.#choose(this.#active);
+        } else {
+          this.#setOpen(true);
+        }
         return;
       case 'Escape':
-      case 'Tab': { this.#setOpen(false); return; }
-      default: break;
+      case 'Tab':
+        this.#setOpen(false);
+        return;
+      default:
+        break;
     }
-    if (event.key.length !== 1) return undefined;
+
+    if (event.key.length !== 1) {
+      return;
+    }
+
     const now = Date.now();
     this.#typed = now - this.#typedAt < 900 ? this.#typed + event.key : event.key;
     this.#typedAt = now;
-    const found = this.options.findIndex((option) => option.label.toLowerCase().startsWith(this.#typed.toLowerCase()));
-    if (found < 0) return undefined;
+    const found = this.options.findIndex((option) => {
+      return option.label.toLowerCase().startsWith(this.#typed.toLowerCase());
+    });
+
+    if (found < 0) {
+      return;
+    }
+
     this.#active = found;
-    if (this.#open) this.requestUpdate();
-    else this.#choose(found);
+
+    if (this.#open) {
+      this.requestUpdate();
+    } else {
+      this.#choose(found);
+    }
   };
 
   render() {
-    const selected = this.options.find((option) => option.value === this.value)?.label ?? '';
+    const selected = this.options.find((option) => option.value === this.value)?.label;
+    const listId = `${this.#uid}-listbox`;
+
     return html`
-      <button type="button" class="select-button" aria-haspopup="listbox" aria-expanded=${String(this.#open)} aria-label=${this.label || null} @click=${() => { this.#setOpen(!this.#open); }} @keydown=${this.#keyDown}>
-        <span>${selected}</span><svg viewBox="0 0 24 24" class="icon chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+      <button
+        type="button"
+        class="select-button"
+        aria-haspopup="listbox"
+        aria-expanded=${String(this.#open)}
+        aria-controls=${listId}
+        aria-label=${this.label || null}
+        ?disabled=${this.disabled}
+        @click=${() => {
+          this.#setOpen(!this.#open);
+        }}
+        @keydown=${this.#keyDown}
+      >
+        <span>${selected || this.placeholder}</span>
+        <svg viewBox="0 0 24 24" class="icon chevron" aria-hidden="true">
+          <path d="m6 9 6 6 6-6"></path>
+        </svg>
       </button>
-      <ul class="select-list" role="listbox" ?hidden=${!this.#open} aria-activedescendant=${this.#open ? `${this.#uid}-o${String(this.#active)}` : null}>
-        ${this.options.map((option, index) => html`<li class="select-option${index === this.#active ? ' is-active' : ''}" role="option" aria-selected=${String(option.value === this.value)} id=${`${this.#uid}-o${String(index)}`} @mouseenter=${() => { this.#active = index; this.requestUpdate(); }} @pointerdown=${(event: PointerEvent) => { event.preventDefault(); this.#choose(index); }}>${option.label}<svg viewBox="0 0 24 24" class="icon tick" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></li>`)}
+      <ul
+        id=${listId}
+        class="select-list"
+        role="listbox"
+        ?hidden=${!this.#open}
+        aria-activedescendant=${this.#open ? `${this.#uid}-option-${String(this.#active)}` : null}
+      >
+        ${this.options.map(
+          (option, index) => html`
+            <li
+              class="select-option${index === this.#active ? ' is-active' : ''}"
+              role="option"
+              aria-selected=${String(option.value === this.value)}
+              id=${`${this.#uid}-option-${String(index)}`}
+              @mouseenter=${() => {
+                this.#active = index;
+                this.requestUpdate();
+              }}
+              @pointerdown=${(event: PointerEvent) => {
+                event.preventDefault();
+                this.#choose(index);
+              }}
+            >
+              ${option.label}
+              <svg viewBox="0 0 24 24" class="icon tick" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+            </li>
+          `,
+        )}
       </ul>
     `;
   }
