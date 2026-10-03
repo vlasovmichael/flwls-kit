@@ -78,9 +78,10 @@
   --shadow-float: 0 2px 4px rgb(16 23 32 / 8%), 0 14px 32px -18px rgb(16 23 32 / 50%);
 
   /* Шрифт */
-  --display: "Geologica Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Два имени: пакет @fontsource-variable регистрирует «Geologica Variable», Google Fonts — «Geologica». */
+  --display: "Geologica Variable", "Geologica", ui-sans-serif, system-ui, sans-serif;
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --text-micro: 10px;
   --text-label: 11px;
   --text-small: 12px;
