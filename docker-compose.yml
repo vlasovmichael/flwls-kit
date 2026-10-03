@@ -1,0 +1,21 @@
+# Сайт дизайн-системы на Oracle: ui.flwls.link через туннель Cloudflare и вход Access.
+services:
+  docs:
+    build: .
+    image: flwls-kit-docs:latest
+    container_name: flwls-kit-docs
+    restart: unless-stopped
+    ports:
+      # Только loopback, для отладки через ssh -L: снаружи сайт виден через туннель.
+      - '127.0.0.1:3070:80'
+    networks:
+      - gateway_net
+    mem_limit: 64m
+    logging:
+      driver: json-file
+      options: { max-size: '5m', max-file: '2' }
+
+networks:
+  gateway_net:
+    name: gateway_net
+    external: true
