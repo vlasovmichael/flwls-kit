@@ -26,7 +26,20 @@ export const globalTypes = {
   },
 };
 
-export const initialGlobals = { theme: 'system' };
+/**
+ * Пример в отдельном iframe внутри документации стартует с темой страницы-родителя.
+ * Иначе при загрузке он объявляет тему по умолчанию и откатывает выбор в тулбаре.
+ */
+function parentTheme() {
+  try {
+    if (window.parent === window.top) return null;
+    return window.parent.document.documentElement.getAttribute('data-theme');
+  } catch {
+    return null;
+  }
+}
+
+export const initialGlobals = { theme: parentTheme() ?? 'system' };
 
 export const decorators = [
   (story: () => unknown, context: { globals: { theme?: string } }) => {
