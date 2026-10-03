@@ -51,3 +51,10 @@ body,
   flex-wrap: wrap;
   gap: var(--space-8);
 }
+
+/* Оверлеям нужно место со всех сторон: триггер в центре области примера. */
+.demo-center {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+}

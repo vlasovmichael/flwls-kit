@@ -44,9 +44,37 @@ export class HTooltip extends LitElement {
       visibility: visible;
     }
 
+    .tooltip[data-side='top'] {
+      --from: translateY(4px);
+    }
+
+    .tooltip[data-side='bottom'] {
+      --from: translateY(-4px);
+    }
+
+    .tooltip[data-side='left'] {
+      --from: translateX(4px);
+    }
+
+    .tooltip[data-side='right'] {
+      --from: translateX(-4px);
+    }
+
     @media (prefers-reduced-motion: no-preference) {
       .tooltip {
-        transition: opacity 160ms ease;
+        transform: var(--from, none);
+        transition:
+          opacity 140ms ease,
+          transform 180ms var(--spring),
+          visibility 0s linear 140ms;
+      }
+
+      :host([open]) .tooltip {
+        transform: none;
+        transition:
+          opacity 140ms ease,
+          transform 180ms var(--spring),
+          visibility 0s;
       }
     }
   `;
@@ -98,6 +126,11 @@ export class HTooltip extends LitElement {
     slot?.addEventListener('slotchange', () => {
       this.#syncTriggers();
     });
+    this.renderRoot
+      .querySelector<HTMLSlotElement>('slot:not([name])')
+      ?.addEventListener('slotchange', () => {
+        this.#describe();
+      });
     this.#syncTriggers();
   }
 
@@ -122,7 +155,8 @@ export class HTooltip extends LitElement {
     }
   }
 
-  // Слот хранит исходный aria-describedby, чтобы не испортить чужую связь.
+  // Текст подсказки — в aria-description триггера: ссылка aria-describedby на id внутри
+  // shadow DOM не проходит границу, и диктор её не читал. Исходный атрибут храним для отката.
   #syncTriggers() {
     const slot = this.renderRoot.querySelector<HTMLSlotElement>('slot[name="trigger"]');
     const current = new Set(slot?.assignedElements().filter(this.#isHtmlElement) ?? []);
@@ -139,14 +173,7 @@ export class HTooltip extends LitElement {
         continue;
       }
 
-      const describedBy = trigger.getAttribute('aria-describedby');
-      this.#triggers.set(trigger, describedBy);
-      const ids = describedBy?.split(/\s+/).filter(Boolean) ?? [];
-
-      if (!ids.includes(this.#id)) {
-        ids.push(this.#id);
-        trigger.setAttribute('aria-describedby', ids.join(' '));
-      }
+      this.#triggers.set(trigger, trigger.getAttribute('aria-description'));
 
       trigger.addEventListener('mouseenter', this.#onMouseEnter);
       trigger.addEventListener('mouseleave', this.#onMouseLeave);
@@ -155,7 +182,22 @@ export class HTooltip extends LitElement {
       trigger.addEventListener('pointerdown', this.#onPointerDown);
     }
 
+    this.#describe();
     this.#position();
+  }
+
+  /** Текст из основного слота — описание каждого триггера. */
+  #describe() {
+    const slot = this.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])');
+    const text = (slot?.assignedNodes({ flatten: true }) ?? [])
+      .map((node) => node.textContent ?? '')
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    for (const trigger of this.#triggers.keys()) {
+      trigger.setAttribute('aria-description', text);
+    }
   }
 
   #isHtmlElement(element: Element): element is HTMLElement {
@@ -170,19 +212,19 @@ export class HTooltip extends LitElement {
     this.#triggers.clear();
   }
 
-  #restoreTrigger(trigger: HTMLElement, describedBy: string | null) {
+  #restoreTrigger(trigger: HTMLElement, description: string | null) {
     trigger.removeEventListener('mouseenter', this.#onMouseEnter);
     trigger.removeEventListener('mouseleave', this.#onMouseLeave);
     trigger.removeEventListener('focusin', this.#onFocusIn);
     trigger.removeEventListener('focusout', this.#onFocusOut);
     trigger.removeEventListener('pointerdown', this.#onPointerDown);
 
-    if (describedBy === null) {
-      trigger.removeAttribute('aria-describedby');
+    if (description === null) {
+      trigger.removeAttribute('aria-description');
       return;
     }
 
-    trigger.setAttribute('aria-describedby', describedBy);
+    trigger.setAttribute('aria-description', description);
   }
 
   #onMouseEnter = () => {
@@ -283,35 +325,51 @@ export class HTooltip extends LitElement {
     const safeGap = Number.isFinite(gap) ? gap : 0;
     const triggerBox = trigger.getBoundingClientRect();
     const tooltipBox = tooltip.getBoundingClientRect();
-    let left = triggerBox.left;
-    let top = triggerBox.bottom + safeGap;
+    // Нет места со своей стороны — открываемся с противоположной, а не налезаем на триггер.
+    const side = this.#fit(this.side, triggerBox, tooltipBox, safeGap);
+    let left: number;
+    let top: number;
 
-    if (this.side === 'top' || this.side === 'bottom') {
-      top = this.side === 'top'
+    if (side === 'top' || side === 'bottom') {
+      top = side === 'top'
         ? triggerBox.top - tooltipBox.height - safeGap
         : triggerBox.bottom + safeGap;
-      left = this.#alignedPosition(
-        triggerBox.left,
-        triggerBox.width,
-        tooltipBox.width,
-      );
+      left = this.#alignedPosition(triggerBox.left, triggerBox.width, tooltipBox.width);
     } else {
-      left = this.side === 'left'
+      left = side === 'left'
         ? triggerBox.left - tooltipBox.width - safeGap
         : triggerBox.right + safeGap;
-      top = this.#alignedPosition(
-        triggerBox.top,
-        triggerBox.height,
-        tooltipBox.height,
-      );
+      top = this.#alignedPosition(triggerBox.top, triggerBox.height, tooltipBox.height);
     }
 
+    tooltip.dataset.side = side;
     const clampedLeft = this.#clamp(left, tooltipBox.width, safeGap, window.innerWidth);
     const clampedTop = this.#clamp(top, tooltipBox.height, safeGap, window.innerHeight);
 
     tooltip.style.left = `${String(clampedLeft)}px`;
     tooltip.style.top = `${String(clampedTop)}px`;
   };
+
+  #fit(side: TooltipSide, trigger: DOMRect, tooltip: DOMRect, gap: number): TooltipSide {
+    const room: Record<TooltipSide, number> = {
+      top: trigger.top - gap,
+      bottom: window.innerHeight - trigger.bottom - gap,
+      left: trigger.left - gap,
+      right: window.innerWidth - trigger.right - gap,
+    };
+    const opposite: Record<TooltipSide, TooltipSide> = {
+      top: 'bottom',
+      bottom: 'top',
+      left: 'right',
+      right: 'left',
+    };
+    const need = (candidate: TooltipSide) =>
+      candidate === 'top' || candidate === 'bottom' ? tooltip.height : tooltip.width;
+    // Своя сторона, затем противоположная, затем сверху или снизу — что первым поместится.
+    const order: TooltipSide[] = [side, opposite[side], 'top', 'bottom'];
+
+    return order.find((candidate) => room[candidate] >= need(candidate)) ?? side;
+  }
 
   #alignedPosition(start: number, length: number, tooltipLength: number) {
     if (this.align === 'start') {
