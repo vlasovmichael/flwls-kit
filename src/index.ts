@@ -24,3 +24,11 @@ export {
   type SegmentedControlOption,
   type SegmentedControlSize,
 } from './h-segmented-control.js';
+export {
+  HTab,
+  HTabPanel,
+  HTabs,
+  type TabsActivation,
+  type TabsOrientation,
+  type TabsVariant,
+} from './h-tabs.js';
