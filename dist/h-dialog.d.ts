@@ -1,4 +1,5 @@
 import { LitElement } from 'lit';
+import './h-icon.js';
 /** Окно подтверждения: `confirm` или `cancel` приходят после анимации ухода. */
 export declare class HDialog extends LitElement {
     #private;
@@ -10,8 +11,15 @@ export declare class HDialog extends LitElement {
         title: {
             type: StringConstructor;
         };
+        description: {
+            type: StringConstructor;
+        };
         danger: {
             type: BooleanConstructor;
+            reflect: boolean;
+        };
+        size: {
+            type: StringConstructor;
             reflect: boolean;
         };
         confirmLabel: {
@@ -26,7 +34,9 @@ export declare class HDialog extends LitElement {
     static styles: import("lit").CSSResult;
     open: boolean;
     title: string;
+    description: string;
     danger: boolean;
+    size: 'sm' | 'md' | 'lg';
     confirmLabel: string;
     cancelLabel: string;
     constructor();
