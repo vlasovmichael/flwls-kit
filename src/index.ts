@@ -63,3 +63,9 @@ export {
   type DropdownMenuItem,
   type DropdownMenuSize,
 } from './h-dropdown-menu.js';
+export {
+  HDrawer,
+  type DrawerCloseReason,
+  type DrawerPlacement,
+  type DrawerSize,
+} from './h-drawer.js';
