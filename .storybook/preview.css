@@ -6,8 +6,16 @@ body,
   background: var(--ground) !important;
   color: var(--ink);
 }
-.sbdocs-content {
+/* Текст вокруг компонентов в примерах — шрифтами кита, а не браузерным Times. */
+.sbdocs-content,
+.sb-show-main,
+.docs-story {
   font-family: var(--sans);
+  font-size: var(--text-base);
+}
+.sb-show-main code,
+.docs-story code {
+  font-family: var(--mono);
 }
 .sbdocs-content :where(h1, h2, h3, h4) {
   font-family: var(--display);
@@ -50,4 +58,42 @@ body,
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-8);
+}
+
+/* Оверлеям нужно место со всех сторон: триггер в центре области примера. */
+.demo-center {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+}
+
+/* Выпадающему меню нужно место снизу, чтобы открытый список не обрезался рамкой примера. */
+.demo-drop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-height: 240px;
+}
+
+/* Строка таблицы с меню действий справа. */
+.demo-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 28rem;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: var(--border-thin) solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--text-base) var(--sans);
+}
+
+/* Колонка контролов внутри панели или формы. */
+.demo-stack {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }

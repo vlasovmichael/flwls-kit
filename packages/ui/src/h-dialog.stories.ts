@@ -72,7 +72,9 @@ const opener = (a: Args) => html`
   >
 `;
 
-export const Playground = {
+export const PlaygroundTest = {
+  name: 'Test: Playground',
+  tags: ['!dev', '!autodocs'],
   render: opener,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     const canvas = within(canvasElement);
@@ -86,8 +88,13 @@ export const Playground = {
   },
 };
 
-export const EscapeCancels = {
-  name: 'Escape cancels',
+export const Playground = {
+  render: PlaygroundTest.render,
+};
+
+export const EscapeCancelsTest = {
+  name: 'Test: Escape Cancels',
+  tags: ['!dev', '!autodocs'],
   render: opener,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: Args }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Open dialog' }));
@@ -95,6 +102,50 @@ export const EscapeCancels = {
     await waitFor(() => expect(dialog.open).toBe(true));
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(args.onCancel).toHaveBeenCalled());
+  },
+};
+
+export const FocusTrapTest = {
+  name: 'Test: Focus Trap',
+  tags: ['!dev', '!autodocs'],
+  render: opener,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Open dialog' }));
+    const dialog = canvasElement.querySelector('h-dialog') as HDialog;
+    await waitFor(() => expect(dialog.open).toBe(true));
+    const root = dialog.shadowRoot as ShadowRoot;
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('section button')];
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    last.focus();
+    await userEvent.keyboard('{Tab}');
+    await expect(root.activeElement).toBe(first);
+    await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+    await expect(root.activeElement).toBe(last);
+    // Проверку контраста запускаем на проявившемся окне, а не посреди анимации входа.
+    await Promise.all(root.getAnimations().map((a) => a.finished));
+  },
+};
+
+export const ReopenTest = {
+  name: 'Test: Reopen',
+  tags: ['!dev', '!autodocs'],
+  render: opener,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const openButton = within(canvasElement).getByRole('button', { name: 'Open dialog' });
+    const dialog = canvasElement.querySelector('h-dialog') as HDialog;
+    const root = dialog.shadowRoot as ShadowRoot;
+    const settle = () => Promise.all(root.getAnimations().map((a) => a.finished));
+
+    for (let round = 0; round < 2; round += 1) {
+      await userEvent.click(openButton);
+      await waitFor(() => expect(dialog.open).toBe(true));
+      await settle();
+      const backdrop = root.querySelector('.backdrop') as HTMLElement;
+      await expect(getComputedStyle(backdrop).opacity).toBe('1');
+      await userEvent.click(root.querySelector('.cancel') as HTMLButtonElement);
+      await waitFor(() => expect(dialog.open).toBe(false));
+    }
   },
 };
 

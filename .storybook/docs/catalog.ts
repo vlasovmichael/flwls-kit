@@ -32,6 +32,7 @@ export const COLOR: Group[] = [
       { name: '--panel-raised', use: 'Dense table, block on top of a card' },
       { name: '--panel-sunk', use: 'Inset block: input field, code background' },
       { name: '--sheen', use: 'Hover highlight on any surface' },
+      { name: '--scrim', use: 'Dimmed page behind a dialog or drawer' },
     ],
   },
   {
