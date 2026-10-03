@@ -58,3 +58,27 @@ body,
   place-items: center;
   min-height: 220px;
 }
+
+/* Выпадающему меню нужно место снизу, чтобы открытый список не обрезался рамкой примера. */
+.demo-drop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-height: 240px;
+}
+
+/* Строка таблицы с меню действий справа. */
+.demo-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 28rem;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: var(--border-thin) solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--text-base) var(--sans);
+}

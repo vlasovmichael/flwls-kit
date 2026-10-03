@@ -56,3 +56,10 @@ export {
 export { HDisclosure } from './h-disclosure.js';
 export { HAccordion } from './h-accordion.js';
 export { HAlert, type AlertTone } from './h-alert.js';
+export {
+  HDropdownMenu,
+  type DropdownMenuAlign,
+  type DropdownMenuCloseReason,
+  type DropdownMenuItem,
+  type DropdownMenuSize,
+} from './h-dropdown-menu.js';
