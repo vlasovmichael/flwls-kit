@@ -35,19 +35,18 @@ test.each<TooltipAlign>(['start', 'center', 'end'])(
   },
 );
 
-test('подсказка связывает trigger с role tooltip и восстанавливает атрибут', async () => {
+test('текст подсказки становится описанием триггера и откатывается при удалении', async () => {
   const tooltip = new HTooltip();
+  tooltip.textContent = 'Market prices update every second.';
   const trigger = document.createElement('button');
-  trigger.setAttribute('aria-describedby', 'existing-help');
+  trigger.setAttribute('aria-description', 'existing');
   await appendTooltip(tooltip, trigger);
-  const content = tooltip.shadowRoot?.querySelector('[role="tooltip"]') as HTMLElement;
 
-  expect(content.id).not.toBe('');
-  expect(trigger.getAttribute('aria-describedby')).toContain('existing-help');
-  expect(trigger.getAttribute('aria-describedby')).toContain(content.id);
+  expect(trigger.getAttribute('aria-description')).toBe('Market prices update every second.');
+  expect(trigger.hasAttribute('aria-describedby')).toBe(false);
 
   tooltip.remove();
-  expect(trigger.getAttribute('aria-describedby')).toBe('existing-help');
+  expect(trigger.getAttribute('aria-description')).toBe('existing');
 });
 
 test('наведение открывает подсказку после задержки и уход закрывает её', async () => {

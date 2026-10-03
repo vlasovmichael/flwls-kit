@@ -75,6 +75,7 @@ export default {
 };
 
 const render = (args: TooltipArgs) => html`
+  <div class="demo-center">
   <h-tooltip
     .open=${args.open}
     side=${args.side}
@@ -84,9 +85,10 @@ const render = (args: TooltipArgs) => html`
     @open=${args.onOpen}
     @close=${args.onClose}
   >
-    <button slot="trigger" type="button">Open tooltip</button>
+    <button slot="trigger" type="button" class="demo-button">Hover or focus me</button>
     Market prices update every second.
   </h-tooltip>
+  </div>
 `;
 
 export const PlaygroundTest = {
@@ -95,7 +97,7 @@ export const PlaygroundTest = {
   render,
   play: async ({ canvasElement, args }: { canvasElement: HTMLElement; args: TooltipArgs }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button', { name: 'Open tooltip' });
+    const trigger = canvas.getByRole('button', { name: 'Hover or focus me' });
     const tooltip = canvasElement.querySelector('h-tooltip') as HTMLElement & {
       open: boolean;
       shadowRoot: ShadowRoot;
@@ -103,7 +105,9 @@ export const PlaygroundTest = {
 
     await userEvent.hover(trigger);
     await waitFor(() => expect(tooltip.open).toBe(true));
-    await expect(trigger.getAttribute('aria-describedby')).toContain('tooltip-');
+    await expect(trigger.getAttribute('aria-description')).toBe(
+      'Market prices update every second.',
+    );
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(tooltip.open).toBe(false));
     await expect(args.onOpen).toHaveBeenCalled();
