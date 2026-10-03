@@ -1,4 +1,6 @@
 export { HStat } from './h-stat.js';
+export { HSpinner, type SpinnerSize } from './h-spinner.js';
+export { HProgress } from './h-progress.js';
 export { HDialog } from './h-dialog.js';
 export { HToast } from './h-toast.js';
 export {
