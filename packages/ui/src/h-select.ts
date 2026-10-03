@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import './h-icon.js';
 
 export type SelectOption = { label: string; value: string };
@@ -12,6 +12,149 @@ function clipLeft(node: HTMLElement) {
   }
 
   return 0;
+}
+
+// Вид по умолчанию: компонент в light DOM, поэтому стили кладутся в документ один раз
+// под селектор h-select. Проект может переопределить их своими правилами.
+const DEFAULT_STYLES = css`
+  h-select {
+    position: relative;
+    display: inline-block;
+    font-family: var(--sans);
+  }
+
+  h-select .select-button {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-width: 9rem;
+    min-height: calc(var(--space-6) + var(--space-3));
+    padding: 0 var(--space-3) 0 var(--space-4);
+    border: var(--border-thin) solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--text-base);
+    cursor: pointer;
+    transition: border-color 160ms ease, background 160ms ease;
+  }
+
+  h-select .select-button:hover {
+    border-color: var(--rule-strong);
+    background: var(--panel-raised);
+  }
+
+  h-select .select-button:focus-visible {
+    outline: var(--border-thick) solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  h-select .select-button:disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-disabled);
+  }
+
+  h-select .chevron {
+    color: var(--ink-3);
+    transition: transform 220ms var(--spring);
+  }
+
+  h-select[data-open='true'] .chevron {
+    transform: rotate(180deg);
+  }
+
+  h-select .select-list {
+    position: absolute;
+    top: calc(100% + var(--space-1));
+    right: 0;
+    z-index: var(--layer-popover);
+    box-sizing: border-box;
+    min-width: 100%;
+    width: max-content;
+    max-height: 16rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: var(--space-1);
+    list-style: none;
+    border: var(--border-thin) solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+    box-shadow: var(--shadow-float);
+    transform-origin: top right;
+    animation: h-select-drop 180ms var(--spring);
+  }
+
+  h-select .select-list[hidden] {
+    display: none;
+  }
+
+  h-select.is-up .select-list {
+    top: auto;
+    bottom: calc(100% + var(--space-1));
+    transform-origin: bottom right;
+  }
+
+  h-select.is-start .select-list {
+    right: auto;
+    left: 0;
+    transform-origin: top left;
+  }
+
+  h-select .select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: calc(var(--radius-sm) - 3px);
+    color: var(--ink);
+    font-size: var(--text-base);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  h-select .select-option.is-active {
+    background: var(--wash);
+  }
+
+  h-select .select-option[aria-selected='true'] {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  h-select .tick {
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  h-select .select-option[aria-selected='true'] .tick {
+    opacity: 1;
+  }
+
+  @keyframes h-select-drop {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(-4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    h-select .select-list,
+    h-select .chevron {
+      animation: none;
+      transition: none;
+    }
+  }
+`;
+
+/** Кладёт стили по умолчанию в документ один раз на страницу. */
+function adoptDefaultStyles() {
+  const sheet = DEFAULT_STYLES.styleSheet;
+  if (!sheet || document.adoptedStyleSheets.includes(sheet)) return;
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
 }
 
 /** Селект использует light DOM, чтобы проекты могли оформлять список в своих слоях. */
@@ -66,7 +209,8 @@ export class HSelect extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.className = 'select';
+    adoptDefaultStyles();
+    this.classList.add('select');
     this.dataset.uid = this.#uid;
     document.addEventListener('pointerdown', this.#outside);
   }
