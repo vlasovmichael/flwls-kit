@@ -44,3 +44,4 @@ export {
   type TabsVariant,
 } from './h-tabs.js';
 export { HDisclosure } from './h-disclosure.js';
+export { HAlert, type AlertTone } from './h-alert.js';
