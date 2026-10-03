@@ -69,3 +69,9 @@ export {
   type DrawerPlacement,
   type DrawerSize,
 } from './h-drawer.js';
+export {
+  HPagination,
+  pageSlots,
+  type PageSlot,
+  type PaginationSize,
+} from './h-pagination.js';
