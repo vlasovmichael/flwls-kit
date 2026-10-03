@@ -1,0 +1,30 @@
+/* Документация живёт на токенах кита: тёмная тема перекрашивает и текст страниц. */
+body,
+.sb-show-main,
+.docs-story,
+.sbdocs-wrapper {
+  background: var(--ground) !important;
+  color: var(--ink);
+}
+.sbdocs-content {
+  font-family: var(--sans);
+}
+.sbdocs-content :where(h1, h2, h3, h4) {
+  font-family: var(--display);
+  color: var(--ink) !important;
+}
+.sbdocs-content :where(p, li, td, th, span) {
+  color: var(--ink-2);
+}
+.sbdocs-content code {
+  background: var(--panel-sunk) !important;
+  color: var(--ink) !important;
+  border-color: var(--rule) !important;
+}
+.sbdocs-content :where(table, tr, td, th) {
+  background: var(--panel) !important;
+  border-color: var(--rule) !important;
+}
+.sbdocs-content a {
+  color: var(--accent);
+}
