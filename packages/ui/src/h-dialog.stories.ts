@@ -127,6 +127,28 @@ export const FocusTrapTest = {
   },
 };
 
+export const ReopenTest = {
+  name: 'Test: Reopen',
+  tags: ['!dev', '!autodocs'],
+  render: opener,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const openButton = within(canvasElement).getByRole('button', { name: 'Open dialog' });
+    const dialog = canvasElement.querySelector('h-dialog') as HDialog;
+    const root = dialog.shadowRoot as ShadowRoot;
+    const settle = () => Promise.all(root.getAnimations().map((a) => a.finished));
+
+    for (let round = 0; round < 2; round += 1) {
+      await userEvent.click(openButton);
+      await waitFor(() => expect(dialog.open).toBe(true));
+      await settle();
+      const backdrop = root.querySelector('.backdrop') as HTMLElement;
+      await expect(getComputedStyle(backdrop).opacity).toBe('1');
+      await userEvent.click(root.querySelector('.cancel') as HTMLButtonElement);
+      await waitFor(() => expect(dialog.open).toBe(false));
+    }
+  },
+};
+
 export const Destructive = {
   args: { title: 'Delete entry?', text: 'This cannot be undone.', danger: true, confirmLabel: 'Delete' },
   render: opener,

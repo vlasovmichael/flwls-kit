@@ -260,8 +260,17 @@ export class HDialog extends LitElement {
           fill: 'forwards',
         })
       : null;
-    if (out) out.onfinish = done;
-    else done();
+    // Анимацию ухода снимаем после конца: с fill: forwards прозрачность 0 пережила бы
+    // закрытие и погасила окно при следующем открытии.
+    if (out) {
+      out.onfinish = () => {
+        done();
+        out.finished.catch(() => undefined);
+        out.cancel();
+      };
+    } else {
+      done();
+    }
   }
 
   render() {
