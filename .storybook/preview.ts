@@ -1,4 +1,5 @@
 import '../packages/ui/src/tokens.css';
+import '../packages/ui/src/base.css';
 import './preview.css';
 import './docs/ds-tokens.ts';
 import { ThemedDocs } from './docs/themed-docs.ts';
@@ -60,7 +61,7 @@ export const parameters = {
       order: [
         'Introduction',
         'Style Guide',
-        ['Colors', 'Icons', 'Typography', 'Space', 'Radius', 'Shadow', 'Border Width', 'Opacity', 'Breakpoints', 'Layers', 'Motion'],
+        ['Colors', 'Icons', 'Typography', 'Space', 'Radius', 'Shadow', 'Border Width', 'Opacity', 'Breakpoints', 'Layers', 'Motion', 'Utilities'],
         'Components',
         ['Actions', 'Form Controls', 'Overlays', 'Display', 'Navigation'],
         'Engineering Resources',

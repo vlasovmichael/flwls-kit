@@ -34,7 +34,8 @@ body,
   background: var(--panel) !important;
   border-color: var(--rule) !important;
 }
-.sbdocs-content a {
+/* Ссылки кита в примерах красит base.css, а не обвязка документации. */
+.sbdocs-content a:not(.h-link) {
   color: var(--accent);
 }
 
@@ -99,3 +100,10 @@ body,
   margin-top: var(--space-5);
 }
 
+
+/* Абзац живого примера внутри sb-unstyled: стили документации туда не доходят. */
+.demo-text {
+  margin: var(--space-4) 0;
+  color: var(--ink-2);
+  font: var(--text-base) / 1.6 var(--sans);
+}

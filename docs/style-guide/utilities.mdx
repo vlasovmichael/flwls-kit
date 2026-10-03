@@ -1,0 +1,46 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Style Guide/Utilities" />
+
+# Utilities
+
+Two classes that do not need a component. They live in `base.css`, loaded after the tokens:
+
+```js
+import '@flwls/ui/tokens.css';
+import '@flwls/ui/base.css';
+```
+
+## Link
+
+`h-link` styles a native `<a>` inside text: accent color, a thin underline that skips descenders
+and gets stronger on hover, the kit focus ring. `h-link h-link--quiet` keeps the text color and
+turns accent only on hover — for captions and tables, where accent would compete with data.
+
+<div className="sb-unstyled">
+  <p className="demo-text">
+    Fees are explained in the <a className="h-link" href="#utilities">trading guide</a>, and the
+    history lives in the <a className="h-link h-link--quiet" href="#utilities">ledger</a>.
+  </p>
+</div>
+
+```html
+<a class="h-link" href="/guide">trading guide</a>
+<a class="h-link h-link--quiet" href="/ledger">ledger</a>
+```
+
+**Use** a link to go somewhere. **Don't use** it for an action on the page — that is a Button.
+
+## Visually hidden
+
+`h-visually-hidden` hides text from the screen but keeps it for screen readers: a label for an
+icon-only control, extra context for a number. Never use `display: none` for that — it hides
+the text from assistive technology too.
+
+`h-visually-hidden h-visually-hidden--focusable` shows the element while it has keyboard focus —
+the classic "Skip to content" link.
+
+```html
+<button><h-icon name="trash-2"></h-icon><span class="h-visually-hidden">Delete row</span></button>
+<a class="h-link h-visually-hidden h-visually-hidden--focusable" href="#main">Skip to content</a>
+```

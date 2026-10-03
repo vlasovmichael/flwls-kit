@@ -1,0 +1,61 @@
+/* Утилиты кита: то, что не нуждается в компоненте. Подключается после tokens.css. */
+
+/* Ссылка в тексте: подчёркивание тоньше текста и не налезает на буквы с хвостами. */
+.h-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-thin);
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 2px;
+  transition: text-decoration-color 160ms ease;
+}
+
+.h-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.h-link:focus-visible {
+  outline: var(--border-thick) solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Тихая ссылка: в подписях и таблицах, где акцентный цвет спорил бы с данными. */
+.h-link--quiet {
+  color: inherit;
+  text-decoration-color: var(--rule-strong);
+}
+
+.h-link--quiet:hover {
+  color: var(--accent);
+}
+
+/* Текст только для скринридера: не display: none — тот прячет и от него. */
+.h-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Ссылка «к содержимому» видна, только когда на ней фокус с клавиатуры. */
+.h-visually-hidden--focusable:focus-visible {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  white-space: normal !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-link {
+    transition: none;
+  }
+}
