@@ -255,11 +255,13 @@ export class HTabs extends LitElement {
             }
         }
     }
+    // Только обновлённые элементы: через innerHTML родитель подключается раньше детей,
+    // остальных подхватит updated() после первой отрисовки.
     #tabs() {
-        return [...this.querySelectorAll(':scope > h-tab')];
+        return [...this.querySelectorAll(':scope > h-tab')].filter((el) => el instanceof HTab);
     }
     #panels() {
-        return [...this.querySelectorAll(':scope > h-tab-panel')];
+        return [...this.querySelectorAll(':scope > h-tab-panel')].filter((el) => el instanceof HTabPanel);
     }
     #tabId(tab, index) {
         if (!tab.id) {
@@ -278,6 +280,9 @@ export class HTabs extends LitElement {
         this.#assignSlots();
         const tabs = this.#tabs();
         const panels = this.#panels();
+        // Без вкладок выбирать не из чего: пустой выбор затёр бы заданный value.
+        if (!tabs.length)
+            return;
         const selected = tabs.find((tab) => tab.value === this.value && !tab.disabled)
             ?? tabs.find((tab) => !tab.disabled);
         const nextValue = selected?.value ?? '';

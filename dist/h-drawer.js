@@ -1,15 +1,21 @@
 import { LitElement, css, html } from 'lit';
 import { EASE, GLIDE, play } from './motion.js';
 import './h-icon.js';
-/** Сдвиг панели за край экрана для каждой стороны; знак start/end зависит от направления письма. */
-function offscreen(placement, rtl) {
+/** Кадр до появления: за краем экрана; по центру — ниже, меньше, прозрачно. */
+export function hiddenFrame(placement, rtl) {
+    if (placement === 'center')
+        return { transform: 'translateY(12px) scale(0.98)', opacity: 0 };
     if (placement === 'bottom')
-        return 'translateY(100%)';
+        return { transform: 'translateY(100%)' };
     const fromRight = (placement === 'end') !== rtl;
-    return fromRight ? 'translateX(100%)' : 'translateX(-100%)';
+    return { transform: fromRight ? 'translateX(100%)' : 'translateX(-100%)' };
+}
+/** Кадр в покое с теми же свойствами, что у скрытого, чтобы анимация шла в обе стороны. */
+export function shownFrame(placement) {
+    return placement === 'center' ? { transform: 'none', opacity: 1 } : { transform: 'none' };
 }
 /**
- * Боковая панель поверх страницы: фильтры, детали строки, форма без ухода со страницы.
+ * Панель с края или окно по центру поверх страницы: фильтры, детали строки, короткая форма.
  * Держится на нативном <dialog>: ловушку фокуса, inert фона и верхний слой даёт браузер.
  */
 export class HDrawer extends LitElement {
@@ -66,6 +72,45 @@ export class HDrawer extends LitElement {
       border-inline-end: var(--border-thin) solid var(--rule);
     }
 
+    :host([size='full']) dialog {
+      width: 100vw;
+    }
+
+    /* По центру — окно для чтения деталей; full занимает экран с полем по краям. */
+    :host([placement='center']) dialog {
+      inset: 0;
+      width: min(48rem, calc(100vw - 2 * var(--space-6)));
+      height: auto;
+      max-height: calc(100dvh - 2 * var(--space-6));
+      margin: auto;
+      border: var(--border-thin) solid var(--rule);
+      border-radius: var(--radius);
+    }
+
+    :host([placement='center'][size='sm']) dialog {
+      width: min(32rem, calc(100vw - 2 * var(--space-6)));
+    }
+
+    :host([placement='center'][size='lg']) dialog {
+      width: min(72rem, calc(100vw - 2 * var(--space-6)));
+    }
+
+    :host([placement='center'][size='full']) dialog {
+      width: calc(100vw - 2 * var(--space-6));
+      height: calc(100dvh - 2 * var(--space-6));
+    }
+
+    /* [size] держит специфичность выше правил ширины: размер отражается в атрибут всегда. */
+    @media (width <= 720px) {
+      :host([placement='center'][size]) dialog {
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+
     /* Снизу — лист на всю ширину с ограниченной высотой, как на телефоне. */
     :host([placement='bottom']) dialog {
       inset: auto 0 0;
@@ -89,6 +134,7 @@ export class HDrawer extends LitElement {
       flex: 1;
       min-width: 0;
       margin: 0;
+      overflow-wrap: anywhere;
       font-family: var(--display);
       font-size: var(--text-lead);
       font-weight: 600;
@@ -205,7 +251,7 @@ export class HDrawer extends LitElement {
         if (!animate)
             return;
         const rtl = getComputedStyle(this).direction === 'rtl';
-        play(dialog, [{ transform: offscreen(this.placement, rtl) }, { transform: 'none' }], {
+        play(dialog, [hiddenFrame(this.placement, rtl), shownFrame(this.placement)], {
             duration: 320,
             easing: GLIDE,
         });
@@ -221,7 +267,7 @@ export class HDrawer extends LitElement {
             return;
         const rtl = getComputedStyle(this).direction === 'rtl';
         const leaving = [
-            play(dialog, [{ transform: 'none' }, { transform: offscreen(this.placement, rtl) }], {
+            play(dialog, [shownFrame(this.placement), hiddenFrame(this.placement, rtl)], {
                 duration: 220,
                 easing: EASE,
                 fill: 'forwards',
