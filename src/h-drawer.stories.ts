@@ -8,8 +8,8 @@ import './h-segmented-control.ts';
 
 type Args = {
   heading: string;
-  placement: 'start' | 'end' | 'bottom';
-  size: 'sm' | 'md' | 'lg';
+  placement: 'start' | 'end' | 'bottom' | 'center';
+  size: 'sm' | 'md' | 'lg' | 'full';
   onOpen: () => void;
   onClose: () => void;
 };
@@ -28,13 +28,15 @@ export default {
     heading: { control: 'text', description: 'Panel heading; the `heading` slot replaces it' },
     placement: {
       control: 'inline-radio',
-      options: ['end', 'start', 'bottom'],
-      description: 'Edge the panel slides from. `start` and `end` follow the writing direction',
+      options: ['end', 'start', 'bottom', 'center'],
+      description:
+        'Edge the panel slides from; `center` opens a window. `start` and `end` follow writing',
     },
     size: {
       control: 'inline-radio',
-      options: ['sm', 'md', 'lg'],
-      description: 'Panel width: 20, 24 or 36 rem. Ignored for `bottom`',
+      options: ['sm', 'md', 'lg', 'full'],
+      description:
+        'Side: 20, 24, 36 rem or full width. Center: 32, 48, 72 rem or full screen',
     },
     onOpen: { table: { category: 'Events' }, description: '`open` — the panel was shown' },
     onClose: {
@@ -52,7 +54,8 @@ The page behind is dimmed and inert; focus stays inside and returns to the opene
 Escape, the close button and a click on the dimmed page close it.
 
 **Use** for a task that needs the page context: tweak filters and watch the table,
-read a row's details.
+read a row's details. \`placement="center"\` with \`size="full"\` is for detail views too wide for a
+side panel: a record with tables, a transcript, a log.
 **Don't use** for a yes/no question — use a Dialog. Don't put a multi-step flow into a drawer.
 
 Anatomy: header with heading and close button, scrolling body (default slot), optional
@@ -228,4 +231,25 @@ export const LongContent = {
       <h-button slot="footer">Close</h-button>
     </h-drawer>
   `,
+};
+
+export const Center = {
+  name: 'Center window',
+  args: { heading: 'IP 203.0.113.7', placement: 'center', size: 'lg' },
+  render,
+};
+
+export const FullScreen = {
+  name: 'Full screen',
+  args: { heading: 'Session transcript', placement: 'center', size: 'full' },
+  render,
+};
+
+export const LongHeading = {
+  name: 'Long heading',
+  args: {
+    heading: 'AAAAB3NzaC1yc2EAAAABJQAAAQEArDp4cun2lhr4'.repeat(4),
+    placement: 'center',
+  },
+  render,
 };
