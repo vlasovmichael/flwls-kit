@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { HDrawer } from './h-drawer.ts';
+import { HDrawer, hiddenFrame, shownFrame } from './h-drawer.ts';
 
 async function appendDrawer() {
   const drawer = new HDrawer();
@@ -41,5 +41,26 @@ test('hide() на закрытой панели ничего не шлёт', asy
   drawer.hide();
   await drawer.updateComplete;
   expect(closed).toBe(0);
+  drawer.remove();
+});
+
+test('по центру окно появляется снизу и из прозрачности, сбоку — из-за края', () => {
+  expect(hiddenFrame('center', false)).toEqual({
+    transform: 'translateY(12px) scale(0.98)',
+    opacity: 0,
+  });
+  expect(shownFrame('center')).toEqual({ transform: 'none', opacity: 1 });
+  expect(hiddenFrame('end', false)).toEqual({ transform: 'translateX(100%)' });
+  expect(hiddenFrame('end', true)).toEqual({ transform: 'translateX(-100%)' });
+  expect(shownFrame('end')).toEqual({ transform: 'none' });
+});
+
+test('placement и size отражаются в атрибутах для стилей', async () => {
+  const { drawer } = await appendDrawer();
+  drawer.placement = 'center';
+  drawer.size = 'full';
+  await drawer.updateComplete;
+  expect(drawer.getAttribute('placement')).toBe('center');
+  expect(drawer.getAttribute('size')).toBe('full');
   drawer.remove();
 });

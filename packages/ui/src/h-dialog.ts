@@ -75,7 +75,9 @@ export class HDialog extends LitElement {
       color: var(--attn);
     }
     h2 {
+      min-width: 0;
       margin: 0;
+      overflow-wrap: anywhere;
       font-family: var(--display);
       font-size: var(--text-lead);
       line-height: 1.3;
