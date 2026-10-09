@@ -169,3 +169,21 @@ test('вкладки получают вид и ориентацию конте�
   expect(first.dataset.variant).toBe('wrap');
   tabs.remove();
 });
+
+test('вкладки, вставленные через innerHTML, связываются без ошибок', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  host.innerHTML = `
+    <h-tabs value="b">
+      <h-tab value="a">A</h-tab><h-tab value="b">B</h-tab>
+      <h-tab-panel value="a">pa</h-tab-panel><h-tab-panel value="b">pb</h-tab-panel>
+    </h-tabs>`;
+  const tabs = host.querySelector('h-tabs') as HTabs;
+  await tabs.updateComplete;
+
+  const tabEls = [...host.querySelectorAll('h-tab')];
+  const panelEls = [...host.querySelectorAll<HTMLElement>('h-tab-panel')];
+  expect(tabEls.map((t) => t.getAttribute('aria-selected'))).toEqual(['false', 'true']);
+  expect(panelEls.map((p) => p.hidden)).toEqual([true, false]);
+  host.remove();
+});
