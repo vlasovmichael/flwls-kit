@@ -43,7 +43,11 @@ export class HDialog extends LitElement {
     }
     section {
       position: relative;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
       width: min(24rem, 100%);
+      max-height: 100%;
       padding: var(--space-5);
       border: var(--border-thin) solid var(--rule);
       border-radius: var(--radius);
@@ -96,6 +100,7 @@ export class HDialog extends LitElement {
       border-top: var(--border-thin) solid var(--rule);
     }
     header {
+      flex: none;
       display: flex;
       align-items: center;
       gap: var(--space-3);
@@ -164,7 +169,12 @@ export class HDialog extends LitElement {
       height: var(--space-4);
     }
     /* Отступ до кнопок держит разметка компонента: текст в слоте бывает голой строкой. */
+    /* Длинное содержимое прокручивается внутри: окно не выходит за край экрана. */
     .body {
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: auto;
+      overscroll-behavior: contain;
       margin-bottom: var(--space-5);
       color: var(--ink-2);
       font-size: var(--text-base);
@@ -174,6 +184,7 @@ export class HDialog extends LitElement {
       margin: 0;
     }
     footer {
+      flex: none;
       display: flex;
       justify-content: flex-end;
       gap: var(--space-2);
