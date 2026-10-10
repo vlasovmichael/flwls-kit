@@ -7,6 +7,7 @@ type Args = {
   title: string;
   text: string;
   danger: boolean;
+  size: 'sm' | 'md' | 'lg' | 'full';
   confirmLabel: string;
   cancelLabel: string;
   onConfirm: () => void;
@@ -20,6 +21,7 @@ export default {
     title: 'Save changes?',
     text: 'Settings apply immediately.',
     danger: false,
+    size: 'md',
     confirmLabel: 'Confirm',
     cancelLabel: 'Cancel',
     onConfirm: fn(),
@@ -29,6 +31,11 @@ export default {
     title: { control: 'text', description: 'The question the buttons answer' },
     text: { control: 'text', description: 'Body text (default slot)' },
     danger: { control: 'boolean', description: 'Destructive action: red confirm button with a warning icon' },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'full'],
+      description: '`full` fills the viewport; its header is fixed and body scrolls',
+    },
     confirmLabel: { control: 'text', description: 'Confirm button label (`confirm-label`)' },
     cancelLabel: { control: 'text', description: 'Cancel button label (`cancel-label`)' },
     onConfirm: { table: { category: 'Events' }, description: '`confirm` — the confirm button was pressed' },
@@ -43,7 +50,7 @@ Focus moves into the dialog and returns to the opener when it closes.
 **Use** for an action that cannot be undone: delete, close a position.
 **Don't use** for "saved" messages — use a Toast.
 
-Set \`open\` to show it. \`confirm\` and \`cancel\` fire after the exit animation, and \`open\` becomes false.`,
+Set \`open\` to show it. \`size\` is \`md\` by default; use \`full\` for a full-screen task with a fixed title bar and a scrolling body. \`confirm\` and \`cancel\` fire after the exit animation, and \`open\` becomes false.`,
       },
       story: { inline: false, height: '360px' },
     },
@@ -64,6 +71,7 @@ const opener = (a: Args) => html`
   <h-dialog
     title=${a.title}
     ?danger=${a.danger}
+    size=${a.size}
     confirm-label=${a.confirmLabel}
     cancel-label=${a.cancelLabel}
     @confirm=${a.onConfirm}
@@ -158,6 +166,23 @@ export const Open = {
   name: 'Open (static)',
   args: { title: 'Save changes?' },
   render: (a: Args) => html`<h-dialog open title=${a.title} confirm-label=${a.confirmLabel} cancel-label=${a.cancelLabel}
+    >${a.text}</h-dialog
+  >`,
+};
+
+export const Full = {
+  name: 'Full screen',
+  args: {
+    size: 'full',
+    title: 'October 2026',
+    text: 'Use the full-screen dialog for a focused workspace with enough content to scroll.',
+  },
+  render: (a: Args) => html`<h-dialog
+    open
+    size=${a.size}
+    title=${a.title}
+    confirm-label=${a.confirmLabel}
+    cancel-label=${a.cancelLabel}
     >${a.text}</h-dialog
   >`,
 };
