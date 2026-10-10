@@ -33,3 +33,26 @@ test('Tab с последней кнопки ведёт на первую, Shift
   expect(dialog.shadowRoot?.activeElement).toBe(last);
   dialog.remove();
 });
+
+test('полноэкранное окно сохраняет шапку и прокручивает тело', async () => {
+  const dialog = document.createElement('h-dialog') as HDialog;
+  dialog.size = 'full';
+  dialog.description = 'Длинное содержимое окна';
+  dialog.open = true;
+  document.body.append(dialog);
+  await dialog.updateComplete;
+
+  const root = dialog.shadowRoot as ShadowRoot;
+  const header = root.querySelector('header') as HTMLElement;
+  const body = root.querySelector('.body') as HTMLElement;
+  const styles = HDialog.styles as unknown as { cssText: string };
+  expect(dialog.getAttribute('size')).toBe('full');
+  expect(header).toBeTruthy();
+  expect(body).toBeTruthy();
+  expect(styles.cssText).toContain("width: 100dvw");
+  expect(styles.cssText).toContain("height: 100dvh");
+  expect(styles.cssText).toContain("border-radius: 0");
+  expect(styles.cssText).toContain("position: sticky");
+  expect(styles.cssText).toContain("overflow: auto");
+  dialog.remove();
+});
