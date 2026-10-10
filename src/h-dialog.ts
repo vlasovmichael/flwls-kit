@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import './h-icon.js';
 import { EASE, SPRING, play } from './motion.js';
+import { installModalLock } from './modal-lock.js';
 
 const FOCUSABLE = [
   'button:not([disabled])',
@@ -85,6 +86,7 @@ export class HDialog extends LitElement {
       min-height: 0;
       flex: 1;
       overflow: auto;
+      overscroll-behavior: contain;
       margin-bottom: 0;
       padding: var(--space-5);
     }
@@ -251,6 +253,7 @@ export class HDialog extends LitElement {
     if (!changed.has('open')) return;
     if (this.open) {
       this.#opener = document.activeElement as HTMLElement | null;
+      installModalLock();
       document.body.classList.add('is-modal-open');
       document.addEventListener('keydown', this.#escape);
       document.addEventListener('keydown', this.#trapFocus);

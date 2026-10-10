@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { EASE, GLIDE, play } from './motion.js';
+import { installModalLock } from './modal-lock.js';
 import './h-icon.js';
 
 export type DrawerPlacement = 'start' | 'end' | 'bottom' | 'center';
@@ -267,6 +268,7 @@ export class HDrawer extends LitElement {
     for (const animation of this.#leaving) animation.cancel();
     this.#leaving = [];
     if (!dialog.open) dialog.showModal();
+    installModalLock();
     document.body.classList.add('is-modal-open');
     this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }));
 

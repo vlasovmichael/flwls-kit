@@ -56,3 +56,18 @@ test('полноэкранное окно сохраняет шапку и пр�
   expect(styles.cssText).toContain("overflow: auto");
   dialog.remove();
 });
+
+test('открытое окно запрещает прокрутку страницы под собой', async () => {
+  const dialog = document.createElement('h-dialog') as HDialog;
+  dialog.open = true;
+  document.body.append(dialog);
+  await dialog.updateComplete;
+  const rules = document.adoptedStyleSheets
+    .flatMap((sheet) => [...sheet.cssRules].map((rule) => rule.cssText));
+  const lock = rules.some((rule) => rule.includes('is-modal-open')
+    && rule.includes('overflow: hidden'));
+  expect(lock).toBe(true);
+  expect(document.body.classList.contains('is-modal-open')).toBe(true);
+  dialog.remove();
+  expect(document.body.classList.contains('is-modal-open')).toBe(false);
+});
