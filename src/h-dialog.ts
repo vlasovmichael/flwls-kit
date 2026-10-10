@@ -131,7 +131,20 @@ export class HDialog extends LitElement {
       font: inherit;
       font-size: var(--text-base);
       padding: var(--space-2) var(--space-4);
+      transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease;
     }
+    @media (hover: hover) {
+      button:hover { border-color: var(--ink-3); background: var(--hover-wash); color: var(--ink); }
+      .close:hover { border-color: transparent; background: var(--hover-wash); }
+      .confirm:hover { border-color: var(--data); background: var(--gain-wash); }
+      :host([danger]) .confirm:hover {
+        border-color: var(--attn);
+        background: var(--attn-wash);
+        color: var(--attn);
+      }
+    }
+    button:active { background: var(--active-wash); }
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);
       outline-offset: 2px;
@@ -174,6 +187,7 @@ export class HDialog extends LitElement {
       background: var(--attn-wash);
       color: var(--attn);
     }
+    @media (prefers-reduced-motion: reduce) { button { transition: none; } }
     @media (width <= 26rem) {
       footer {
         flex-direction: column-reverse;

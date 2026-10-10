@@ -117,6 +117,32 @@ export const Positive = { args: { variant: 'positive' }, render };
 
 export const Negative = { args: { variant: 'negative' }, render };
 
+/** Canvas показывает результат наведения: после загрузки курсор уже на кнопке. */
+export const HoverStates = {
+  name: 'Hover states',
+  render: () => html`
+    <div style="display:flex; flex-wrap:wrap; gap:var(--space-2)">
+      <h-button variant="neutral">Neutral</h-button>
+      <h-button variant="primary">Primary</h-button>
+      <h-button variant="positive">Positive</h-button>
+      <h-button variant="danger">Danger</h-button>
+      <h-button variant="ghost">Ghost</h-button>
+      <h-icon-button label="Close"><h-icon name="x"></h-icon></h-icon-button>
+    </div>
+  `,
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const button = canvasElement.querySelector('h-button') as HTMLElement & {
+      shadowRoot: ShadowRoot;
+    };
+    await userEvent.hover(button.shadowRoot.querySelector('button') as HTMLButtonElement);
+  },
+  parameters: {
+    docs: {
+      description: { story: 'Наведение и нажатие меняют только цвет, фон или рамку.' },
+    },
+  },
+};
+
 export const Small = { args: { size: 'sm' }, render };
 
 export const Medium = { args: { size: 'md' }, render };

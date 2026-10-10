@@ -67,11 +67,11 @@ export class HTag extends LitElement {
       font: inherit;
       font-size: var(--text-base);
       line-height: 1;
+      transition: background-color var(--motion-fast) ease;
     }
 
-    button:hover {
-      background: var(--panel);
-    }
+    @media (hover: hover) { button:hover { background: var(--panel); } }
+    button:active { background: var(--hover-wash); }
 
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);

@@ -49,6 +49,18 @@ export class HField extends LitElement {
       border: var(--border-thin) solid var(--rule-strong);
       border-radius: var(--radius-sm);
       background: var(--panel);
+      transition: border-color var(--motion-fast) ease, background-color var(--motion-fast) ease;
+    }
+
+    @media (hover: hover) {
+      .control:has(input:not(:disabled):hover, textarea:not(:disabled):hover) {
+        border-color: var(--ink-2);
+        background: var(--hover-wash);
+      }
+    }
+
+    .control:has(input:not(:disabled):active, textarea:not(:disabled):active) {
+      background: var(--active-wash);
     }
 
     .control:focus-within {
@@ -124,6 +136,10 @@ export class HField extends LitElement {
     :host([size='lg']) input,
     :host([size='lg']) textarea {
       font-size: var(--text-lead);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .control { transition: none; }
     }
   `;
 

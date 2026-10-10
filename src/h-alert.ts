@@ -113,12 +113,11 @@ export class HAlert extends LitElement {
       background: transparent;
       color: var(--ink-2);
       cursor: pointer;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease;
     }
 
-    .close:hover {
-      background: var(--panel);
-      color: var(--ink);
-    }
+    @media (hover: hover) { .close:hover { background: var(--panel); color: var(--ink); } }
+    .close:active { background: var(--hover-wash); }
 
     .close:focus-visible {
       outline: var(--border-thick) solid var(--accent);

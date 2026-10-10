@@ -42,7 +42,7 @@ export class HSearch extends LitElement {
       background: var(--panel);
       color: var(--ink);
       font: var(--text-base) var(--sans);
-      transition: border-color 160ms ease;
+      transition: border-color var(--motion-fast) ease, background-color var(--motion-fast) ease;
     }
 
     :host([size='sm']) input {
@@ -54,9 +54,10 @@ export class HSearch extends LitElement {
       color: var(--ink-3);
     }
 
-    input:hover {
-      border-color: var(--ink-2);
+    @media (hover: hover) {
+      input:hover:not(:disabled) { border-color: var(--ink-2); background: var(--hover-wash); }
     }
+    input:active:not(:disabled) { background: var(--active-wash); }
 
     input:focus-visible {
       border-color: var(--accent);
@@ -87,6 +88,7 @@ export class HSearch extends LitElement {
       background: transparent;
       color: var(--ink-3);
       cursor: pointer;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease;
     }
 
     :host([size='sm']) .clear {
@@ -94,10 +96,8 @@ export class HSearch extends LitElement {
       height: var(--space-6);
     }
 
-    .clear:hover {
-      background: var(--sheen);
-      color: var(--ink);
-    }
+    @media (hover: hover) { .clear:hover { background: var(--hover-wash); color: var(--ink); } }
+    .clear:active { background: var(--active-wash); }
 
     .clear:focus-visible {
       outline: var(--border-thick) solid var(--accent);
