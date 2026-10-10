@@ -15,8 +15,10 @@ export class HCard extends LitElement {
       font-family: var(--sans);
     }
 
+    /* Тянется за хостом: карточки в одной строке сетки получаются одной высоты. */
     article {
       box-sizing: border-box;
+      height: 100%;
       overflow: hidden;
       border: var(--border-thin) solid var(--rule);
       border-radius: var(--radius);
