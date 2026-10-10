@@ -32,6 +32,8 @@ export const COLOR: Group[] = [
       { name: '--panel-raised', use: 'Dense table, block on top of a card' },
       { name: '--panel-sunk', use: 'Inset block: input field, code background' },
       { name: '--sheen', use: 'Hover highlight on any surface' },
+      { name: '--hover-wash', use: 'Hover feedback for an interactive control' },
+      { name: '--active-wash', use: 'Pressed feedback, stronger than hover' },
       { name: '--scrim', use: 'Dimmed page behind a dialog or drawer' },
     ],
   },
@@ -181,6 +183,8 @@ export const LAYER: Token[] = [
 
 export const MOTION: Token[] = [
   { name: '--spring', use: 'Enter curve: a slight overshoot and settle' },
+  { name: '--motion-fast', use: 'Short feedback: hover and pressed state' },
+  { name: '--motion-base', use: 'Standard control transition' },
 ];
 
 /** Все имена каталога — для сверки с tokens.css. */

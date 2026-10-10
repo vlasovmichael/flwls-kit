@@ -89,17 +89,21 @@ export class HSegmentedControl extends LitElement {
       font-weight: 600;
       line-height: 1;
       white-space: nowrap;
-      transition: color 180ms ease;
+      transition: color var(--motion-base) ease, background-color var(--motion-fast) ease;
     }
 
     :host([stretch]) button {
       flex: 1 1 0;
     }
 
-    button:hover:not(:disabled),
     button[aria-checked='true'] {
       color: var(--ink);
     }
+
+    @media (hover: hover) {
+      button:hover:not(:disabled) { color: var(--ink); background: var(--hover-wash); }
+    }
+    button:active:not(:disabled) { background: var(--active-wash); }
 
     /* Подложка ещё не измерена — выбор всё равно обязан читаться. */
     .thumb:not(.is-ready) ~ button[aria-checked='true'] {
