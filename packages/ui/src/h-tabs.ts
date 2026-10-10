@@ -201,9 +201,13 @@ export class HTabs extends LitElement {
       display: block;
     }
 
+    /* Не шире контейнера: лишние вкладки прокручиваются, а не растягивают страницу. */
     .tablist {
       display: flex;
       gap: var(--space-1);
+      max-width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
 
     :host([orientation='vertical']) .tablist {
