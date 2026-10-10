@@ -37,12 +37,11 @@ export class HDisclosure extends LitElement {
       font-size: var(--text-base);
       font-weight: 500;
       text-align: left;
-      transition: background-color 140ms ease;
+      transition: background-color var(--motion-fast) ease;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--panel-raised);
-    }
+    @media (hover: hover) { button:hover:not(:disabled) { background: var(--hover-wash); } }
+    button:active:not(:disabled) { background: var(--active-wash); }
 
     button:disabled {
       cursor: not-allowed;

@@ -65,13 +65,17 @@ class HCheckControl extends LitElement {
       background: var(--panel);
       cursor: pointer;
       transition:
-        background-color 140ms ease,
-        border-color 140ms ease;
+        background-color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease;
     }
 
-    .control:hover input:not(:disabled) {
-      border-color: var(--ink-2);
+    @media (hover: hover) {
+      .control:hover input:not(:disabled) {
+        border-color: var(--ink-2);
+        background: var(--hover-wash);
+      }
     }
+    input:active:not(:disabled) { background: var(--active-wash); }
 
     input:focus-visible {
       outline: var(--border-thick) solid var(--accent);

@@ -67,9 +67,13 @@ export class HRadioGroup extends LitElement {
         box-shadow 180ms var(--spring);
     }
 
-    button:hover:not(:disabled) .indicator {
-      border-color: var(--ink-2);
+    @media (hover: hover) {
+      button:hover:not(:disabled) .indicator {
+        border-color: var(--ink-2);
+        background: var(--hover-wash);
+      }
     }
+    button:active:not(:disabled) .indicator { background: var(--active-wash); }
 
     /* Выбранный: акцентное кольцо нарастает к центру и оставляет точку цвета --accent-ink. */
     button[aria-checked='true'] .indicator {

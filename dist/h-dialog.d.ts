@@ -36,7 +36,7 @@ export declare class HDialog extends LitElement {
     title: string;
     description: string;
     danger: boolean;
-    size: 'sm' | 'md' | 'lg';
+    size: 'sm' | 'md' | 'lg' | 'full';
     confirmLabel: string;
     cancelLabel: string;
     constructor();

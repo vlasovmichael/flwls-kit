@@ -26,14 +26,14 @@ export class HCopyButton extends LitElement {
       background: transparent;
       color: var(--ink-3);
       cursor: pointer;
-      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease;
     }
 
-    button:hover {
-      border-color: var(--rule);
-      background: var(--sheen);
-      color: var(--ink);
+    @media (hover: hover) {
+      button:hover { border-color: var(--rule); background: var(--hover-wash); color: var(--ink); }
     }
+    button:active { background: var(--active-wash); }
 
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);

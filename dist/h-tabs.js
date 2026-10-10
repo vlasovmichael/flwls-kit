@@ -22,11 +22,17 @@ export class HTab extends LitElement {
       font-weight: 500;
       line-height: 1;
       user-select: none;
+      transition: color var(--motion-fast) ease, background-color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease;
     }
 
-    :host(:hover) {
-      color: var(--ink);
+    @media (hover: hover) {
+      :host(:hover:not([aria-disabled='true'])) {
+        background: var(--hover-wash);
+        color: var(--ink);
+      }
     }
+    :host(:active:not([aria-disabled='true'])) { background: var(--active-wash); }
 
     :host([aria-selected='true']) {
       color: var(--ink);
