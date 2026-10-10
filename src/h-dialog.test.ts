@@ -57,6 +57,16 @@ test('полноэкранное окно сохраняет шапку и пр�
   dialog.remove();
 });
 
+test('окно обычного размера не выше экрана и прокручивает тело', () => {
+  const css = (HDialog.styles as unknown as { cssText: string }).cssText;
+  const section = /\n {4}section \{([^}]*)\}/.exec(css)?.[1] ?? '';
+  const body = /\n {4}\.body \{([^}]*)\}/.exec(css)?.[1] ?? '';
+  expect(section).toContain('max-height: 100%');
+  expect(section).toContain('flex-direction: column');
+  expect(body).toContain('overflow: auto');
+  expect(body).toContain('min-height: 0');
+});
+
 test('открытое окно запрещает прокрутку страницы под собой', async () => {
   const dialog = document.createElement('h-dialog') as HDialog;
   dialog.open = true;
