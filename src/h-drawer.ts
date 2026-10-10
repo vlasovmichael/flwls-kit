@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { EASE, GLIDE, play } from './motion.js';
+import { installModalLock } from './modal-lock.js';
 import './h-icon.js';
 
 export type DrawerPlacement = 'start' | 'end' | 'bottom' | 'center';
@@ -162,14 +163,14 @@ export class HDrawer extends LitElement {
       background: transparent;
       color: var(--ink-3);
       cursor: pointer;
-      transition: background 160ms ease, color 160ms ease;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease;
     }
 
-    .close:hover {
-      border-color: var(--rule);
-      background: var(--sheen);
-      color: var(--ink);
+    @media (hover: hover) {
+      .close:hover { border-color: var(--rule); background: var(--hover-wash); color: var(--ink); }
     }
+    .close:active { background: var(--active-wash); }
 
     .close:focus-visible {
       outline: var(--border-thick) solid var(--accent);
@@ -267,6 +268,7 @@ export class HDrawer extends LitElement {
     for (const animation of this.#leaving) animation.cancel();
     this.#leaving = [];
     if (!dialog.open) dialog.showModal();
+    installModalLock();
     document.body.classList.add('is-modal-open');
     this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }));
 

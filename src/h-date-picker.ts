@@ -97,14 +97,17 @@ export class HDatePicker extends LitElement {
       font: var(--text-base) / 1 var(--sans);
       font-variant-numeric: tabular-nums;
       text-align: left;
-      transition: border-color 160ms ease, background 160ms ease;
+      transition: border-color var(--motion-fast) ease, background-color var(--motion-fast) ease;
     }
 
-    .trigger:hover,
     :host([open]) .trigger {
       border-color: var(--ink-2);
       background: var(--panel-raised);
     }
+    @media (hover: hover) {
+      .trigger:hover:not(:disabled) { border-color: var(--ink-2); background: var(--panel-raised); }
+    }
+    .trigger:active:not(:disabled) { background: var(--panel-sunk); }
 
     .trigger h-icon {
       color: var(--ink-3);
@@ -174,11 +177,13 @@ export class HDatePicker extends LitElement {
       cursor: pointer;
     }
 
-    .nav:hover {
-      border-color: var(--rule);
-      background: var(--sheen);
-      color: var(--ink);
+    .nav { transition: background-color var(--motion-fast) ease,
+      border-color var(--motion-fast) ease,
+      color var(--motion-fast) ease; }
+    @media (hover: hover) {
+      .nav:hover { border-color: var(--rule); background: var(--hover-wash); color: var(--ink); }
     }
+    .nav:active { background: var(--active-wash); }
 
     table {
       width: 100%;
@@ -205,12 +210,15 @@ export class HDatePicker extends LitElement {
       font-size: var(--text-body);
       font-variant-numeric: tabular-nums;
       text-align: center;
-      transition: background 120ms ease;
+      transition: background-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
     }
 
-    td:hover:not([aria-disabled='true'], [aria-selected='true']) {
+    @media (hover: hover) { td:hover:not([aria-disabled='true'], [aria-selected='true']) {
       background: var(--sheen);
       box-shadow: inset 0 0 0 var(--border-thin) var(--rule);
+    } }
+    td:active:not([aria-disabled='true'], [aria-selected='true']) {
+      background: var(--active-wash);
     }
 
     td.outside {
@@ -278,9 +286,12 @@ export class HDatePicker extends LitElement {
       font: 500 var(--text-small) / 1 var(--sans);
     }
 
-    .text-button:hover {
-      background: var(--panel-raised);
+    .text-button { transition: background-color var(--motion-fast) ease,
+      border-color var(--motion-fast) ease; }
+    @media (hover: hover) {
+      .text-button:hover { border-color: var(--ink-3); background: var(--panel-raised); }
     }
+    .text-button:active { background: var(--panel-sunk); }
 
     @media (prefers-reduced-motion: reduce) {
       .trigger,

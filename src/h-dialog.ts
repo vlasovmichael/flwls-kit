@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import './h-icon.js';
 import { EASE, SPRING, play } from './motion.js';
+import { installModalLock } from './modal-lock.js';
 
 const FOCUSABLE = [
   'button:not([disabled])',
@@ -57,6 +58,43 @@ export class HDialog extends LitElement {
     :host([size='lg']) section {
       width: min(36rem, 100%);
     }
+    :host([size='full']) .backdrop {
+      padding: 0;
+    }
+    :host([size='full']) section {
+      box-sizing: border-box;
+      width: 100dvw;
+      height: 100dvh;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    :host([size='full']) header {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      flex: none;
+      margin-bottom: 0;
+      padding: var(--space-5);
+      border-bottom: var(--border-thin) solid var(--rule);
+      background: var(--panel);
+    }
+    :host([size='full']) .body {
+      min-height: 0;
+      flex: 1;
+      overflow: auto;
+      overscroll-behavior: contain;
+      margin-bottom: 0;
+      padding: var(--space-5);
+    }
+    :host([size='full']) footer {
+      flex: none;
+      padding: var(--space-5);
+      border-top: var(--border-thin) solid var(--rule);
+    }
     header {
       display: flex;
       align-items: center;
@@ -95,7 +133,20 @@ export class HDialog extends LitElement {
       font: inherit;
       font-size: var(--text-base);
       padding: var(--space-2) var(--space-4);
+      transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease;
     }
+    @media (hover: hover) {
+      button:hover { border-color: var(--ink-3); background: var(--hover-wash); color: var(--ink); }
+      .close:hover { border-color: transparent; background: var(--hover-wash); }
+      .confirm:hover { border-color: var(--data); background: var(--gain-wash); }
+      :host([danger]) .confirm:hover {
+        border-color: var(--attn);
+        background: var(--attn-wash);
+        color: var(--attn);
+      }
+    }
+    button:active { background: var(--active-wash); }
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);
       outline-offset: 2px;
@@ -138,6 +189,7 @@ export class HDialog extends LitElement {
       background: var(--attn-wash);
       color: var(--attn);
     }
+    @media (prefers-reduced-motion: reduce) { button { transition: none; } }
     @media (width <= 26rem) {
       footer {
         flex-direction: column-reverse;
@@ -152,7 +204,7 @@ export class HDialog extends LitElement {
   declare title: string;
   declare description: string;
   declare danger: boolean;
-  declare size: 'sm' | 'md' | 'lg';
+  declare size: 'sm' | 'md' | 'lg' | 'full';
   declare confirmLabel: string;
   declare cancelLabel: string;
 
@@ -201,6 +253,7 @@ export class HDialog extends LitElement {
     if (!changed.has('open')) return;
     if (this.open) {
       this.#opener = document.activeElement as HTMLElement | null;
+      installModalLock();
       document.body.classList.add('is-modal-open');
       document.addEventListener('keydown', this.#escape);
       document.addEventListener('keydown', this.#trapFocus);

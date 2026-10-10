@@ -50,6 +50,8 @@ export class HButton extends LitElement {
       font-size: var(--text-base);
       font-weight: 500;
       line-height: 1;
+      transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease;
     }
 
     :host([size='sm']) button {
@@ -92,6 +94,37 @@ export class HButton extends LitElement {
       background: transparent;
       color: var(--ink-2);
     }
+
+    @media (hover: hover) {
+      button:hover:not(:disabled) {
+        border-color: var(--ink-2);
+        background: var(--panel-raised);
+      }
+      :host([variant='primary']) button:hover:not(:disabled) {
+        border-color: var(--accent-2);
+        background: var(--accent-2);
+      }
+      :host([variant='danger']) button:hover:not(:disabled),
+      :host([variant='negative']) button:hover:not(:disabled) {
+        background: var(--loss-wash);
+      }
+      :host([variant='positive']) button:hover:not(:disabled) {
+        background: var(--gain-wash);
+      }
+      :host([variant='ghost']) button:hover:not(:disabled) {
+        border-color: transparent;
+        background: var(--sheen);
+        color: var(--ink);
+      }
+    }
+
+    button:active:not(:disabled) { background: var(--panel-sunk); }
+    :host([variant='primary']) button:active:not(:disabled) { background: var(--accent); }
+    :host([variant='danger']) button:active:not(:disabled),
+    :host([variant='negative']) button:active:not(:disabled) { background: var(--loss-wash); }
+    :host([variant='positive']) button:active:not(:disabled) { background: var(--gain-wash); }
+
+    @media (prefers-reduced-motion: reduce) { button { transition: none; } }
 
     button:disabled {
       cursor: not-allowed;

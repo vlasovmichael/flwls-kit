@@ -55,7 +55,8 @@ export class HDropdownMenu extends LitElement {
       color: var(--ink);
       cursor: pointer;
       font: 500 var(--text-base) / 1 var(--sans);
-      transition: background 160ms ease, border-color 160ms ease;
+      transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease;
     }
 
     :host([size='sm']) .trigger {
@@ -64,11 +65,14 @@ export class HDropdownMenu extends LitElement {
       font-size: var(--text-small);
     }
 
-    .trigger:hover,
     :host([open]) .trigger {
       border-color: var(--ink-3);
       background: var(--panel-raised);
     }
+    @media (hover: hover) {
+      .trigger:hover:not(:disabled) { border-color: var(--ink-3); background: var(--panel-raised); }
+    }
+    .trigger:active:not(:disabled) { background: var(--panel-sunk); }
 
     /* Только иконка: круглая кнопка без рамки, как «⋯» в строке таблицы. */
     :host([icon-only]) .trigger {
@@ -84,11 +88,17 @@ export class HDropdownMenu extends LitElement {
       width: var(--space-6);
     }
 
-    :host([icon-only]) .trigger:hover,
     :host([icon-only][open]) .trigger {
       background: var(--sheen);
       color: var(--ink);
       border-color: var(--rule);
+    }
+    @media (hover: hover) {
+      :host([icon-only]) .trigger:hover:not(:disabled) {
+        background: var(--hover-wash);
+        color: var(--ink);
+        border-color: var(--rule);
+      }
     }
 
     .trigger:disabled {
@@ -177,6 +187,7 @@ export class HDropdownMenu extends LitElement {
       line-height: 1.4;
       text-align: left;
       white-space: nowrap;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease;
     }
 
     .item h-icon {
@@ -197,6 +208,11 @@ export class HDropdownMenu extends LitElement {
     .item.danger:focus {
       background: var(--loss-wash);
     }
+    @media (hover: hover) {
+      .item:hover:not(:disabled) { background: var(--hover-wash); }
+      .item.danger:hover:not(:disabled) { background: var(--loss-wash); }
+    }
+    .item:active:not(:disabled) { background: var(--active-wash); }
 
     .item:disabled {
       cursor: not-allowed;

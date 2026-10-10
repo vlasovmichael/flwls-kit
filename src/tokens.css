@@ -46,6 +46,8 @@
   --panel-raised: var(--color-gray-25);
   --panel-sunk: var(--color-gray-75);
   --sheen: color-mix(in srgb, var(--color-gray-0) 90%, transparent);
+  --hover-wash: color-mix(in srgb, var(--color-blue-600) 6%, transparent);
+  --active-wash: color-mix(in srgb, var(--color-blue-600) 12%, transparent);
   --scrim: color-mix(in srgb, var(--color-gray-950) 40%, transparent);
   --ink: var(--color-gray-900);
   --ink-2: var(--color-gray-600);
@@ -127,6 +129,9 @@
   --layer-dialog: 70;
   --layer-toast: 90;
   --spring: cubic-bezier(0.22, 1.15, 0.36, 1);
+  /* Единый ритм короткой обратной связи; интерактивность не меняет геометрию. */
+  --motion-fast: 140ms;
+  --motion-base: 180ms;
 }
 
 :root[data-theme="dark"] {
@@ -136,6 +141,8 @@
   --panel-raised: var(--color-gray-800);
   --panel-sunk: var(--color-gray-925);
   --sheen: color-mix(in srgb, var(--color-gray-0) 5%, transparent);
+  --hover-wash: color-mix(in srgb, var(--color-blue-400) 10%, transparent);
+  --active-wash: color-mix(in srgb, var(--color-blue-400) 18%, transparent);
   --scrim: color-mix(in srgb, var(--color-gray-950) 65%, transparent);
   --ink: var(--color-gray-75);
   --ink-2: var(--color-gray-400);
@@ -178,6 +185,8 @@
     --panel-raised: var(--color-gray-800);
     --panel-sunk: var(--color-gray-925);
     --sheen: color-mix(in srgb, var(--color-gray-0) 5%, transparent);
+    --hover-wash: color-mix(in srgb, var(--color-blue-400) 10%, transparent);
+    --active-wash: color-mix(in srgb, var(--color-blue-400) 18%, transparent);
     --scrim: color-mix(in srgb, var(--color-gray-950) 65%, transparent);
     --ink: var(--color-gray-75);
     --ink-2: var(--color-gray-400);

@@ -39,13 +39,16 @@ const DEFAULT_STYLES = css`
     font: inherit;
     font-size: var(--text-base);
     cursor: pointer;
-    transition: border-color 160ms ease, background 160ms ease;
+    transition: border-color var(--motion-fast) ease, background-color var(--motion-fast) ease;
   }
 
-  h-select .select-button:hover {
-    border-color: var(--rule-strong);
-    background: var(--panel-raised);
+  @media (hover: hover) {
+    h-select .select-button:hover:not(:disabled) {
+      border-color: var(--rule-strong);
+      background: var(--panel-raised);
+    }
   }
+  h-select .select-button:active:not(:disabled) { background: var(--panel-sunk); }
 
   h-select .select-button:focus-visible {
     outline: var(--border-thick) solid var(--accent);
@@ -123,6 +126,8 @@ const DEFAULT_STYLES = css`
     color: var(--accent);
     font-weight: 500;
   }
+  @media (hover: hover) { h-select .select-option:hover { background: var(--hover-wash); } }
+  h-select .select-option:active { background: var(--active-wash); }
 
   h-select .tick {
     margin-left: auto;

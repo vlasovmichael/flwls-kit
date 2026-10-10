@@ -82,14 +82,16 @@ export class HPagination extends LitElement {
       background: transparent;
       color: var(--ink-2);
       cursor: pointer;
-      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease;
     }
 
-    button:hover:not(:disabled, [aria-current='page']) {
+    @media (hover: hover) { button:hover:not(:disabled, [aria-current='page']) {
       border-color: var(--rule);
       background: var(--sheen);
       color: var(--ink);
-    }
+    } }
+    button:active:not(:disabled, [aria-current='page']) { background: var(--wash); }
 
     button:focus-visible {
       outline: var(--border-thick) solid var(--accent);

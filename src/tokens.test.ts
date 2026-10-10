@@ -17,6 +17,11 @@ const dark = block(':root[data-theme="dark"]');
 const system = block(':root:not([data-theme="light"])');
 
 describe('tokens.css', () => {
+  test('токены движения доступны всем темам', () => {
+    for (const name of ['--motion-fast', '--motion-base', '--hover-wash', '--active-wash']) {
+      expect(light.has(name), name).toBe(true);
+    }
+  });
   test('тёмная тема по атрибуту и по системе совпадает до значения', () => {
     expect([...system].sort()).toEqual([...dark].sort());
   });

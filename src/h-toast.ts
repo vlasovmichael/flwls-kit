@@ -105,12 +105,17 @@ export class HToast extends LitElement {
       background: transparent;
       color: var(--ink-3);
       cursor: pointer;
+      transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease;
     }
+
+    @media (hover: hover) { .close:hover { background: var(--hover-wash); color: var(--ink); } }
+    .close:active { background: var(--active-wash); }
 
     .close:focus-visible {
       outline: var(--border-thick) solid var(--accent);
       outline-offset: var(--space-1);
     }
+    @media (prefers-reduced-motion: reduce) { .close { transition: none; } }
   `;
 
   declare title: string;
